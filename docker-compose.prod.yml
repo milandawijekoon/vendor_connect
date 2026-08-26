@@ -1,0 +1,63 @@
+services:
+  # MySQL is not run here — production database is AWS RDS (see DATABASE_URL in .env on the host).
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.9
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_API_KEY}
+      MEILI_ENV: production
+    volumes:
+      - meili_data:/meili_data
+    # Not published to the host — only reachable by other containers on this network.
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: production
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      # DATABASE_URL comes from .env — points at the RDS endpoint, e.g.:
+      # mysql://<user>:<password>@<rds-endpoint>:3306/wedding_db
+      MEILISEARCH_HOST: "http://meilisearch:7700"
+    depends_on:
+      meilisearch:
+        condition: service_started
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: production
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - api
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - web
+
+volumes:
+  meili_data:
+  caddy_data:
+  caddy_config:
