@@ -1,0 +1,9 @@
+# Overrides for local development — not committed secrets, bind-mounts, etc.
+# docker compose automatically merges this with docker-compose.yml.
+services:
+  api:
+    environment:
+      NODE_ENV: development
+  web:
+    environment:
+      NODE_ENV: development

@@ -1,0 +1,16 @@
+import type { Config } from 'jest';
+
+const config: Config = {
+  moduleFileExtensions: ['js', 'json', 'ts'],
+  rootDir: '.',
+  testRegex: '.*\\.e2e-spec\\.ts$',
+  transform: {
+    '^.+\\.ts$': ['ts-jest', { tsconfig: './tsconfig.json' }],
+  },
+  testEnvironment: 'node',
+  moduleNameMapper: {
+    '^@vendorconnect/shared$': '<rootDir>/../../packages/shared/src',
+  },
+};
+
+export default config;
