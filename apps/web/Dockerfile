@@ -4,23 +4,33 @@ WORKDIR /app
 
 # ── Development ────────────────────────────────────────────────────────────────
 FROM base AS development
-COPY package.json pnpm-lock.yaml* ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/web/package.json ./apps/web/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
 RUN pnpm install --frozen-lockfile
 COPY . .
+RUN pnpm --filter @vendorconnect/shared run build
+WORKDIR /app/apps/web
 EXPOSE 3000
 
 # ── Builder ────────────────────────────────────────────────────────────────────
 FROM base AS builder
-COPY package.json pnpm-lock.yaml* ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/web/package.json ./apps/web/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
 RUN pnpm install --frozen-lockfile
 COPY . .
-RUN pnpm run build
+RUN pnpm --filter @vendorconnect/shared run build
+RUN pnpm --filter @vendorconnect/web run build
 
 # ── Production ─────────────────────────────────────────────────────────────────
 FROM base AS production
 ENV NODE_ENV=production
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+WORKDIR /app/apps/web
 EXPOSE 3000
 CMD ["node", "server.js"]

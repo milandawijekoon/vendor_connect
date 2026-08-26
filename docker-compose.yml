@@ -30,8 +30,8 @@ services:
 
   api:
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/api/Dockerfile
       target: development
     restart: unless-stopped
     env_file:
@@ -41,9 +41,6 @@ services:
       MEILISEARCH_HOST: "http://meilisearch:7700"
     ports:
       - "4000:4000"
-    volumes:
-      - ./apps/api:/app
-      - /app/node_modules
     depends_on:
       mysql:
         condition: service_healthy
@@ -53,18 +50,14 @@ services:
 
   web:
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/web/Dockerfile
       target: development
     restart: unless-stopped
     env_file:
       - .env
     ports:
       - "3000:3000"
-    volumes:
-      - ./apps/web:/app
-      - /app/node_modules
-      - /app/.next
     depends_on:
       - api
     command: ["pnpm", "run", "dev"]

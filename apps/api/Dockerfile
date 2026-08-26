@@ -4,24 +4,32 @@ WORKDIR /app
 
 # ── Development ────────────────────────────────────────────────────────────────
 FROM base AS development
-COPY package.json pnpm-lock.yaml* ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/web/package.json ./apps/web/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
 RUN pnpm install --frozen-lockfile
 COPY . .
+RUN pnpm --filter @vendorconnect/shared run build
+WORKDIR /app/apps/api
 EXPOSE 4000
 
 # ── Builder ────────────────────────────────────────────────────────────────────
 FROM base AS builder
-COPY package.json pnpm-lock.yaml* ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/web/package.json ./apps/web/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
 RUN pnpm install --frozen-lockfile --prod=false
 COPY . .
-RUN pnpm run build
-RUN pnpm prune --prod
+RUN pnpm --filter @vendorconnect/shared run build
+RUN pnpm --filter @wedding/api run build
+RUN pnpm --filter @wedding/api run prisma:generate
 
 # ── Production ─────────────────────────────────────────────────────────────────
 FROM base AS production
 ENV NODE_ENV=production
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app ./
+WORKDIR /app/apps/api
 EXPOSE 4000
 CMD ["node", "dist/main.js"]
