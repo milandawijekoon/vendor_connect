@@ -11,6 +11,7 @@ COPY packages/shared/package.json ./packages/shared/package.json
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm --filter @vendorconnect/shared run build
+RUN pnpm --filter @wedding/api run prisma:generate
 WORKDIR /app/apps/api
 EXPOSE 4000
 
@@ -23,8 +24,8 @@ COPY packages/shared/package.json ./packages/shared/package.json
 RUN pnpm install --frozen-lockfile --prod=false
 COPY . .
 RUN pnpm --filter @vendorconnect/shared run build
-RUN pnpm --filter @wedding/api run build
 RUN pnpm --filter @wedding/api run prisma:generate
+RUN pnpm --filter @wedding/api run build
 
 # ── Production ─────────────────────────────────────────────────────────────────
 FROM base AS production
