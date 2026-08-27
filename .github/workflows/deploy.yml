@@ -26,5 +26,5 @@ jobs:
             git reset --hard origin/main
             docker compose -f docker-compose.prod.yml build
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
-            docker compose -f docker-compose.prod.yml exec -T api node ./node_modules/.bin/prisma migrate deploy --schema=./prisma/schema.prisma
+            docker compose -f docker-compose.prod.yml exec -T api ./node_modules/.bin/prisma migrate deploy --schema=./prisma/schema.prisma
             docker image prune -af --filter "until=48h"
