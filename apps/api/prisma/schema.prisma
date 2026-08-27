@@ -9,7 +9,7 @@ datasource db {
 }
 
 enum Role {
-  COUPLE
+  CUSTOMER
   VENDOR
   ADMIN
 }
@@ -32,7 +32,7 @@ model User {
   id           String    @id @default(cuid())
   email        String    @unique
   passwordHash String
-  role         Role      @default(COUPLE)
+  role         Role      @default(CUSTOMER)
   name         String
   phone        String?
   createdAt    DateTime  @default(now())

@@ -18,7 +18,7 @@ Base URL (dev): `http://localhost:4000/api/v1`
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| POST | `/auth/register` | – | Register as couple or vendor |
+| POST | `/auth/register` | – | Register as customer or vendor |
 | POST | `/auth/login` | – | Returns JWT access token |
 | GET | `/auth/me` | JWT | Current user profile |
 
@@ -44,7 +44,7 @@ Base URL (dev): `http://localhost:4000/api/v1`
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/vendors/:id/reviews` | – | List reviews for a vendor |
-| POST | `/vendors/:id/reviews` | JWT (COUPLE) | Submit a review (one per vendor per user) |
+| POST | `/vendors/:id/reviews` | JWT (CUSTOMER) | Submit a review (one per vendor per user) |
 
 ## Inquiries
 

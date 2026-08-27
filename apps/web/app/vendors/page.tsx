@@ -62,8 +62,8 @@ export default async function VendorsPage({ searchParams }: PageProps) {
   const pageTitle = activeCategory
     ? `${activeCategory.name} in ${activeCity ?? 'Sri Lanka'}`
     : activeCity
-      ? `Wedding Vendors in ${activeCity}`
-      : 'All Wedding Vendors';
+      ? `Vendors in ${activeCity}`
+      : 'All Vendors';
 
   return (
     <>

@@ -19,7 +19,7 @@ import { Public } from '../../common/decorators/public.decorator';
 
 const AUTH_RESPONSE_EXAMPLE = {
   accessToken: 'eyJhbGciOiJIUzI1NiJ9...',
-  user: { id: 'clxxxxxxx', email: 'user@example.com', name: 'Jane Doe', role: 'COUPLE', phone: null },
+  user: { id: 'clxxxxxxx', email: 'user@example.com', name: 'Jane Doe', role: 'CUSTOMER', phone: null },
 };
 
 const ERROR_400 = { schema: { example: { statusCode: 400, message: ['email must be an email'], error: 'Bad Request' } } };
@@ -35,7 +35,7 @@ export class AuthController {
   @Post('register')
   @ApiOperation({
     summary: 'Register a new account',
-    description: 'Creates a `COUPLE` or `VENDOR` account. Returns a signed JWT immediately — no email verification at MVP.',
+    description: 'Creates a `CUSTOMER` or `VENDOR` account. Returns a signed JWT immediately — no email verification at MVP.',
   })
   @ApiCreatedResponse({ description: 'Account created. Use `accessToken` in subsequent requests.', schema: { example: AUTH_RESPONSE_EXAMPLE } })
   @ApiBadRequestResponse({ ...ERROR_400, description: 'Validation failed (missing field, weak password, etc.)' })
@@ -59,7 +59,7 @@ export class AuthController {
   @Get('me')
   @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Get current user', description: 'Returns the authenticated user decoded from the JWT. Useful for bootstrapping client-side auth state.' })
-  @ApiOkResponse({ schema: { example: { id: 'clxxxxxxx', email: 'user@example.com', role: 'COUPLE' } } })
+  @ApiOkResponse({ schema: { example: { id: 'clxxxxxxx', email: 'user@example.com', role: 'CUSTOMER' } } })
   @ApiUnauthorizedResponse({ ...ERROR_401, description: 'Token missing or expired' })
   me(@CurrentUser() user: AuthUser): AuthUser {
     return user;

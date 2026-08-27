@@ -29,7 +29,7 @@ const INQUIRY_EXAMPLE: InquiryDto = {
   email: 'nimal@example.com',
   phone: '+94771234567',
   eventDate: '2027-03-15T00:00:00.000Z',
-  message: 'Hi, I am looking for a photographer for our wedding in March 2027.',
+  message: 'Hi, I am looking for a photographer for an event in March 2027.',
   status: 'NEW' as InquiryDto['status'],
   createdAt: '2026-08-24T00:00:00.000Z',
 };

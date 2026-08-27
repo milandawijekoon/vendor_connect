@@ -15,12 +15,12 @@ export class CreateInquiryDto {
   @MinLength(7)
   phone!: string;
 
-  @ApiPropertyOptional({ example: '2027-03-15', description: 'ISO date string for the wedding / event' })
+  @ApiPropertyOptional({ example: '2027-03-15', description: 'ISO date string for the event' })
   @IsOptional()
   @IsDateString()
   eventDate?: string;
 
-  @ApiProperty({ example: 'Hi, I am looking for a photographer for our wedding in March 2027.', minLength: 20 })
+  @ApiProperty({ example: 'Hi, I am looking for a photographer for an event in March 2027.', minLength: 20 })
   @IsString()
   @MinLength(20)
   message!: string;

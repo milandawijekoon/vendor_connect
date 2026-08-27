@@ -1,7 +1,8 @@
-# VendorConnect (working name) — Wedding Vendor Marketplace
+# VendorConnect (working name) — Event Vendor Marketplace
 
-A two-sided marketplace connecting couples with wedding vendors (photographers, decorators,
-venues, caterers, makeup artists, etc.) in Sri Lanka, modeled on WedMeGood. Couples discover
+A two-sided marketplace connecting customers with vendors for **any occasion** — weddings,
+corporate events, birthdays, parties and more (photographers, decorators, venues, caterers,
+makeup artists, sound & lighting, event planners, etc.) in Sri Lanka. Customers discover
 and inquire; vendors manage profiles and respond to leads.
 
 ## Documentation Index

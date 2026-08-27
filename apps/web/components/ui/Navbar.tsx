@@ -14,12 +14,13 @@ export function Navbar() {
     router.push('/');
   };
 
+  const isStaff = user?.role === Role.ADMIN || user?.role === Role.VENDOR;
   const dashboardHref =
     user?.role === Role.ADMIN
       ? '/dashboard/admin'
       : user?.role === Role.VENDOR
         ? '/dashboard/vendor'
-        : '/dashboard/couple';
+        : '/vendors';
 
   return (
     <header style={{
@@ -40,7 +41,7 @@ export function Navbar() {
             borderRadius: '50%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 18,
-          }}>💍</span>
+          }}>🎉</span>
           <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--primary)', letterSpacing: '-0.3px' }}>
             Vendor<span style={{ color: 'var(--text)' }}>Connect</span>
           </span>
@@ -65,7 +66,7 @@ export function Navbar() {
                 fontSize: 14, fontWeight: 500,
                 color: 'var(--text)',
               }}>
-                Dashboard
+                {isStaff ? 'Dashboard' : 'Browse vendors'}
               </Link>
               <button
                 onClick={handleLogout}

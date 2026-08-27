@@ -10,6 +10,13 @@ const ADMIN_VENDOR_INCLUDE = {
   user: { select: { id: true, name: true, email: true } },
 } as const;
 
+// Status changes re-index the vendor in Meilisearch, so the full set of
+// searchable fields — categories included — must be loaded here.
+const ADMIN_VENDOR_STATUS_INCLUDE = {
+  ...ADMIN_VENDOR_INCLUDE,
+  categories: { include: { category: true } },
+} as const;
+
 function toPage<T>(data: T[], total: number, page: number, limit: number): PaginatedResponse<T> {
   return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
 }
@@ -66,7 +73,7 @@ export class AdminService {
     const updated = await this.prisma.vendorProfile.update({
       where: { id: vendorId },
       data: { status: dto.status },
-      include: ADMIN_VENDOR_INCLUDE,
+      include: ADMIN_VENDOR_STATUS_INCLUDE,
     });
 
     // Keep Meilisearch in sync — status is a filterable attribute
@@ -75,7 +82,7 @@ export class AdminService {
       businessName: updated.businessName,
       description: updated.description,
       city: updated.city,
-      categoryNames: [],
+      categoryNames: updated.categories.map((vc) => vc.category.name),
       priceMin: updated.priceMin,
       priceMax: updated.priceMax,
       avgRating: updated.avgRating,

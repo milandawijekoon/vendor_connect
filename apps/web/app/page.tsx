@@ -1,19 +1,19 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = { title: 'VendorConnect — Find Wedding Vendors in Sri Lanka' };
+export const metadata: Metadata = { title: 'VendorConnect — Find Vendors for Any Occasion in Sri Lanka' };
 
 const CATEGORIES = [
-  { icon: '📷', name: 'Photography', slug: 'photography' },
-  { icon: '🏛️', name: 'Venues',       slug: 'venues' },
-  { icon: '💄', name: 'Makeup',       slug: 'makeup' },
-  { icon: '🎂', name: 'Catering',     slug: 'catering' },
-  { icon: '💐', name: 'Decoration',   slug: 'decoration' },
-  { icon: '🎵', name: 'Music & DJ',   slug: 'music' },
-  { icon: '🎬', name: 'Videography',  slug: 'videography' },
-  { icon: '👗', name: 'Bridal Wear',  slug: 'bridal-wear' },
-  { icon: '🚗', name: 'Transport',    slug: 'transport' },
-  { icon: '💍', name: 'Jewelry',      slug: 'jewelry' },
+  { icon: '📷', name: 'Photography',          slug: 'photography' },
+  { icon: '🎬', name: 'Videography',          slug: 'videography' },
+  { icon: '🏛️', name: 'Venues',               slug: 'venues' },
+  { icon: '🍽️', name: 'Catering',             slug: 'catering' },
+  { icon: '💐', name: 'Decoration',           slug: 'decoration' },
+  { icon: '💄', name: 'Makeup & Hair',        slug: 'makeup-hair' },
+  { icon: '🎵', name: 'Music & Entertainment', slug: 'music-entertainment' },
+  { icon: '🎂', name: 'Cakes & Desserts',     slug: 'cakes-desserts' },
+  { icon: '🔊', name: 'Sound & Lighting',     slug: 'sound-lighting' },
+  { icon: '📋', name: 'Event Planning',       slug: 'event-planning' },
 ];
 
 const CITIES = [
@@ -26,9 +26,9 @@ const CITIES = [
 ];
 
 const STEPS = [
-  { num: '01', icon: '🔍', title: 'Search & Discover', body: 'Browse thousands of verified wedding vendors across Sri Lanka by category, city and budget.' },
+  { num: '01', icon: '🔍', title: 'Search & Discover', body: 'Browse thousands of verified vendors across Sri Lanka by category, city and budget.' },
   { num: '02', icon: '💬', title: 'Contact & Compare',  body: 'Send inquiries directly to vendors, get quotes, and compare their packages and reviews.' },
-  { num: '03', icon: '✅', title: 'Book with Confidence', body: 'Read genuine reviews from real couples, confirm your vendors and plan your dream wedding.' },
+  { num: '03', icon: '✅', title: 'Book with Confidence', body: 'Read genuine reviews from real customers, confirm your vendors and plan your event with ease.' },
 ];
 
 export default function HomePage() {
@@ -53,11 +53,11 @@ export default function HomePage() {
 
         <div style={{ position: 'relative', maxWidth: 760, margin: '0 auto' }}>
           <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8FD9B5', marginBottom: 18 }}>
-            #1 Wedding Vendor Marketplace in Sri Lanka
+            #1 Event Vendor Marketplace in Sri Lanka
           </p>
           <h1 style={{ fontSize: 'clamp(36px,6vw,60px)', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.12, marginBottom: 20 }}>
-            Plan Your Perfect<br />
-            <span style={{ color: '#8FD9B5' }}>Sri Lanka Wedding</span>
+            Find the Right Vendor<br />
+            <span style={{ color: '#8FD9B5' }}>for Every Occasion</span>
           </h1>
           <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.75)', marginBottom: 44, lineHeight: 1.6 }}>
             Discover photographers, venues, caterers, makeup artists and more.<br />
@@ -122,7 +122,7 @@ export default function HomePage() {
         }}>
           {[
             { n: '500+',  l: 'Verified Vendors' },
-            { n: '5,000+', l: 'Happy Couples' },
+            { n: '5,000+', l: 'Happy Customers' },
             { n: '14',    l: 'Cities Covered' },
             { n: '4.8★',  l: 'Average Rating' },
           ].map((s) => (
@@ -138,7 +138,7 @@ export default function HomePage() {
       <section style={{ padding: '72px 20px' }}>
         <div className="container">
           <h2 className="section-title" style={{ textAlign: 'center' }}>Browse by Category</h2>
-          <p className="section-sub" style={{ textAlign: 'center' }}>Everything you need for your perfect wedding day</p>
+          <p className="section-sub" style={{ textAlign: 'center' }}>Everything you need for your next event</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(110px,1fr))', gap: 16 }}>
             {CATEGORIES.map((cat) => (
@@ -155,7 +155,7 @@ export default function HomePage() {
       <section style={{ padding: '64px 20px', background: 'var(--surface)' }}>
         <div className="container">
           <h2 className="section-title" style={{ textAlign: 'center' }}>Browse by City</h2>
-          <p className="section-sub" style={{ textAlign: 'center' }}>Find vendors near your wedding venue</p>
+          <p className="section-sub" style={{ textAlign: 'center' }}>Find vendors near your event</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 16 }}>
             {CITIES.map((city) => (
@@ -172,7 +172,7 @@ export default function HomePage() {
       <section style={{ padding: '72px 20px' }}>
         <div className="container">
           <h2 className="section-title" style={{ textAlign: 'center' }}>How VendorConnect Works</h2>
-          <p className="section-sub" style={{ textAlign: 'center' }}>From discovery to your dream wedding in three simple steps</p>
+          <p className="section-sub" style={{ textAlign: 'center' }}>From discovery to a booked vendor in three simple steps</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 24 }}>
             {STEPS.map((step) => (
@@ -211,10 +211,10 @@ export default function HomePage() {
             Are you a vendor?
           </p>
           <h2 style={{ fontSize: 36, fontWeight: 800, color: '#FFFFFF', marginBottom: 16, lineHeight: 1.2 }}>
-            Grow Your Wedding Business
+            Grow Your Business
           </h2>
           <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.72)', marginBottom: 36, lineHeight: 1.7 }}>
-            List your business on VendorConnect and connect with thousands of couples planning their dream wedding across Sri Lanka.
+            List your business on VendorConnect and connect with thousands of customers planning events across Sri Lanka.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/register?role=VENDOR" className="btn-primary" style={{ fontSize: 16, padding: '13px 32px' }}>

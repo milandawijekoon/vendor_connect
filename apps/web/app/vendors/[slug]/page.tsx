@@ -55,7 +55,7 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>💍</div>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🎉</div>
           <p style={{ color: 'var(--text-sec)' }}>Loading vendor…</p>
         </div>
       </div>

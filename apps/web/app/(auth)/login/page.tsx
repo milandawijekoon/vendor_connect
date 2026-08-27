@@ -17,9 +17,9 @@ export default function LoginPage() {
             {/* Logo */}
             <div style={{ textAlign: 'center', marginBottom: 28 }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <span style={{ width: 36, height: 36, background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>💍</span>
+                <span style={{ width: 36, height: 36, background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🎉</span>
                 <span style={{ fontWeight: 800, fontSize: 20, color: 'var(--primary)' }}>
-                  Wedding<span style={{ color: 'var(--text)' }}>Connect</span>
+                  Vendor<span style={{ color: 'var(--text)' }}>Connect</span>
                 </span>
               </div>
               <h1 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', color: 'var(--text)' }}>Welcome back</h1>

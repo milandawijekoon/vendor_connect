@@ -26,7 +26,7 @@ export class CloudinaryService {
     }
   }
 
-  uploadImage(buffer: Buffer, folder = 'wedding/portfolio'): Promise<UploadResult> {
+  uploadImage(buffer: Buffer, folder = 'vendorconnect/portfolio'): Promise<UploadResult> {
     if (!this.configured) {
       throw new ServiceUnavailableException('Image uploads are not configured on this server');
     }

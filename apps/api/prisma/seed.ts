@@ -22,13 +22,13 @@ const CATEGORIES = [
   { name: 'Makeup & Hair',         slug: 'makeup-hair' },
   { name: 'Music & Entertainment', slug: 'music-entertainment' },
   { name: 'Flowers & Floral',      slug: 'flowers-floral' },
-  { name: 'Wedding Cake',          slug: 'wedding-cake' },
-  { name: 'Bridal Wear',           slug: 'bridal-wear' },
-  { name: 'Groom Attire',          slug: 'groom-attire' },
+  { name: 'Cakes & Desserts',      slug: 'cakes-desserts' },
+  { name: 'Attire & Styling',      slug: 'attire-styling' },
+  { name: 'Sound & Lighting',      slug: 'sound-lighting' },
   { name: 'Invitations & Stationery', slug: 'invitations-stationery' },
   { name: 'Transportation',        slug: 'transportation' },
   { name: 'Jewellery',             slug: 'jewellery' },
-  { name: 'Mehendi / Henna',       slug: 'mehendi-henna' },
+  { name: 'Event Planning',        slug: 'event-planning' },
 ];
 
 // ── Sri Lanka cities ───────────────────────────────────────────────────────
@@ -52,7 +52,7 @@ const VENDORS: VendorSpec[] = [
   { name: 'Lens & Light Studio',     category: 'photography', city: 'Colombo',    priceMin: 80000,  priceMax: 250000, desc: 'Award-winning photography studio specialising in cinematic wedding storytelling. We capture raw emotions and timeless moments with our team of 5 professional photographers.' },
   { name: 'Ceylon Moments',           category: 'photography', city: 'Kandy',      priceMin: 60000,  priceMax: 180000, desc: 'Based in the heart of Kandy, we blend traditional Kandyan wedding aesthetics with modern photographic techniques to deliver breathtaking galleries.' },
   { name: 'Galle Light Photography',  category: 'photography', city: 'Galle',      priceMin: 75000,  priceMax: 220000, desc: 'Specialising in beach and colonial fort weddings around the southern coast. Natural light, candid shots, and editorial storytelling.' },
-  { name: 'Snapshot Pro',             category: 'photography', city: 'Negombo',    priceMin: 50000,  priceMax: 150000, desc: 'Affordable premium photography for budget-conscious couples without compromise on quality. Full-day coverage with edited album.' },
+  { name: 'Snapshot Pro',             category: 'photography', city: 'Negombo',    priceMin: 50000,  priceMax: 150000, desc: 'Affordable premium photography for budget-conscious customers without compromise on quality. Full-day coverage with edited album.' },
   { name: 'Eternal Frames',           category: 'photography', city: 'Colombo',    priceMin: 100000, priceMax: 300000, desc: 'Luxury destination wedding photographers. Featured in Wedding Magazine Sri Lanka 2024. Drone included in all packages.' },
   { name: 'Golden Hour Studios',      category: 'photography', city: 'Galle',      priceMin: 90000,  priceMax: 260000, desc: 'Two-photographer team offering full wedding day coverage, pre-shoot sessions, and premium leather-bound albums.' },
   { name: 'Jaffna Memories',          category: 'photography', city: 'Jaffna',     priceMin: 45000,  priceMax: 130000, desc: 'Specialists in traditional Tamil and Hindu wedding photography. Fluent in all northern ceremony traditions.' },
@@ -109,18 +109,18 @@ const VENDORS: VendorSpec[] = [
   { name: 'Garden of Eden Flowers',   category: 'flowers-floral', city: 'Kandy',   priceMin: 35000,  priceMax: 140000, desc: 'Fresh local and imported flowers. Orchids, lilies, roses, and jasmine specialists. Free delivery within Kandy.' },
   { name: 'Tropical Blooms',          category: 'flowers-floral', city: 'Galle',   priceMin: 40000,  priceMax: 160000, desc: 'Southern Sri Lanka\'s leading florist. Native tropical arrangements using anthurium, bird of paradise, and frangipani.' },
 
-  // Bridal Wear (3)
-  { name: 'Silk & Sequins Bridal',    category: 'bridal-wear', city: 'Colombo', priceMin: 80000,  priceMax: 400000, desc: 'Designer bridal sarees, lehengas, and gowns. Custom design service, alterations, accessories. 3-month lead time recommended.' },
-  { name: 'Kandy Bride Boutique',     category: 'bridal-wear', city: 'Kandy',   priceMin: 60000,  priceMax: 280000, desc: 'Traditional Kandyan osariya and modern bridal fusion. Embroidery and beadwork done in-house. Try before you buy.' },
-  { name: 'Gown Gallery Colombo',     category: 'bridal-wear', city: 'Colombo', priceMin: 100000, priceMax: 500000, desc: 'Exclusively Western bridal gowns. Designer imports from UK and Italy, plus local bespoke. Accessories wall included.' },
+  // Attire & Styling (3)
+  { name: 'Silk & Sequins Couture',   category: 'attire-styling', city: 'Colombo', priceMin: 80000,  priceMax: 400000, desc: 'Designer sarees, lehengas, and gowns for weddings, galas, and formal events. Custom design service, alterations, accessories. 3-month lead time recommended.' },
+  { name: 'Kandy Style Boutique',     category: 'attire-styling', city: 'Kandy',   priceMin: 60000,  priceMax: 280000, desc: 'Traditional Kandyan osariya and modern occasion wear. Embroidery and beadwork done in-house. Try before you buy.' },
+  { name: 'Gown Gallery Colombo',     category: 'attire-styling', city: 'Colombo', priceMin: 100000, priceMax: 500000, desc: 'Formal gowns and evening wear for every occasion. Designer imports from UK and Italy, plus local bespoke. Accessories wall included.' },
 
   // Jewellery (2)
-  { name: 'Gold Crown Jewellers',     category: 'jewellery', city: 'Colombo', priceMin: 100000, priceMax: 2000000, desc: 'Three-generation family jewellers. Custom design, certified diamonds, traditional bridal sets, modern minimalist pieces.' },
-  { name: 'Heritage Gems Kandy',      category: 'jewellery', city: 'Kandy',   priceMin: 80000,  priceMax: 1500000, desc: 'Specialists in Ceylon sapphires and precious stones. Traditional kandyan necklaces, modern sets, wedding bands.' },
+  { name: 'Gold Crown Jewellers',     category: 'jewellery', city: 'Colombo', priceMin: 100000, priceMax: 2000000, desc: 'Three-generation family jewellers. Custom design, certified diamonds, statement sets, and modern minimalist pieces for any occasion.' },
+  { name: 'Heritage Gems Kandy',      category: 'jewellery', city: 'Kandy',   priceMin: 80000,  priceMax: 1500000, desc: 'Specialists in Ceylon sapphires and precious stones. Traditional Kandyan necklaces, modern sets, and gift pieces.' },
 ];
 
-// ── Couple user names ──────────────────────────────────────────────────────
-const COUPLE_NAMES = [
+// ── Customer user names ──────────────────────────────────────────────────────
+const CUSTOMER_NAMES = [
   'Amara Silva',      'Dilshan Fernando',  'Kavindi Perera',   'Nuwan Jayawardena',
   'Sachini Wijesekara','Thilak Rajapaksa', 'Oshani Kumari',    'Malshan Gunawardena',
   'Tharushi Bandara', 'Chathura Senanayake','Nadeesha Dissanayake','Roshan Wickramasinghe',
@@ -147,18 +147,18 @@ const REVIEW_COMMENTS = [
   'Quick turnaround time, delivered everything promised in the contract. No hidden costs.',
   'Beautiful work, great communication, and competitive pricing. A complete package.',
   'They captured moments I did not even know were happening. Truly talented artists.',
-  'Best decision we made for our wedding. Wish we could relive the day just to hire them again.',
+  'Best decision we made for our event. Wish we could relive the day just to hire them again.',
 ];
 
 const INQUIRY_MESSAGES = [
-  'Hello, we are planning our wedding for early next year and would love to know your availability and packages.',
-  'Hi! I came across your profile and loved your work. Could you share your pricing for a 300-guest wedding?',
-  'We are getting married in Colombo in March. Do you cover outstation weddings as well?',
+  'Hello, we are planning an event for early next year and would love to know your availability and packages.',
+  'Hi! I came across your profile and loved your work. Could you share your pricing for a 300-guest function?',
+  'We have an event in Colombo in March. Do you cover outstation bookings as well?',
   'I would like to know if you are available on 15th February 2027 and what packages you offer.',
   'Can you please share your brochure and pricing list? We have a budget of around 150,000.',
-  'My fiancée and I love your portfolio. Are you available for a weekend wedding in December?',
-  'We need coverage from morning preparation through to the reception dinner. What is included?',
-  'Do you offer pre-wedding shoots as part of your package? Also what is the delivery timeline?',
+  'We love your portfolio. Are you available for a weekend event in December?',
+  'We need coverage from morning setup through to the reception dinner. What is included?',
+  'Do you offer pre-event sessions as part of your package? Also what is the delivery timeline?',
   'Hello! We found you through VendorConnect and would like to schedule a meeting to discuss details.',
   'What is your cancellation policy and do you require a deposit to hold the date?',
 ];
@@ -182,23 +182,23 @@ async function main() {
   // ── 2. Admin user ──────────────────────────────────────────────────────
   console.log('👑 Seeding admin user...');
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@weddingconnect.lk' },
+    where: { email: 'admin@vendorconnect.lk' },
     update: {},
     create: {
-      email: 'admin@weddingconnect.lk',
+      email: 'admin@vendorconnect.lk',
       passwordHash: hash('Admin@1234'),
       name: 'VendorConnect Admin',
       role: Role.ADMIN,
     },
   });
-  console.log(`   ✓ admin@weddingconnect.lk (password: Admin@1234)\n`);
+  console.log(`   ✓ admin@vendorconnect.lk (password: Admin@1234)\n`);
 
   // ── 3. Vendor users ────────────────────────────────────────────────────
   console.log('🏢 Seeding vendor users & profiles...');
   const vendorUsers: { id: string; email: string }[] = [];
   for (let i = 0; i < VENDORS.length; i++) {
     const v = VENDORS[i]!;
-    const email = `vendor${i + 1}@weddingconnect.lk`;
+    const email = `vendor${i + 1}@vendorconnect.lk`;
     const user = await prisma.user.upsert({
       where: { email },
       update: {},
@@ -258,7 +258,7 @@ async function main() {
         await prisma.portfolioImage.create({
           data: {
             vendorId:          profileId,
-            cloudinaryPublicId: `wedding/seed/${seed}`,
+            cloudinaryPublicId: `vendorconnect/seed/${seed}`,
             url:               img(seed),
             order:             j,
           },
@@ -270,26 +270,26 @@ async function main() {
   }
   console.log(`   ✓ ${vendorProfiles.length} vendor profiles with portfolio images\n`);
 
-  // ── 5. Couple users ────────────────────────────────────────────────────
-  console.log('💑 Seeding couple users...');
-  const coupleUsers: { id: string; name: string }[] = [];
-  for (let i = 0; i < COUPLE_NAMES.length; i++) {
-    const name = COUPLE_NAMES[i]!;
-    const email = `couple${i + 1}@example.com`;
+  // ── 5. Customer users ────────────────────────────────────────────────────
+  console.log('🙋 Seeding customer users...');
+  const customerUsers: { id: string; name: string }[] = [];
+  for (let i = 0; i < CUSTOMER_NAMES.length; i++) {
+    const name = CUSTOMER_NAMES[i]!;
+    const email = `customer${i + 1}@example.com`;
     const user = await prisma.user.upsert({
       where: { email },
       update: {},
       create: {
         email,
-        passwordHash: hash('Couple@1234'),
+        passwordHash: hash('Customer@1234'),
         name,
-        role: Role.COUPLE,
+        role: Role.CUSTOMER,
         phone: `+9476${String(2000000 + i).slice(1)}`,
       },
     });
-    coupleUsers.push({ id: user.id, name });
+    customerUsers.push({ id: user.id, name });
   }
-  console.log(`   ✓ ${coupleUsers.length} couple users\n`);
+  console.log(`   ✓ ${customerUsers.length} customer users\n`);
 
   // ── 6. Reviews ─────────────────────────────────────────────────────────
   console.log('⭐ Seeding reviews...');
@@ -297,12 +297,12 @@ async function main() {
   const reviewedPairs = new Set<string>();
 
   for (const vendor of vendorProfiles) {
-    // Pick 5–12 unique couples to review this vendor
-    const reviewers = pickN(coupleUsers, rand(5, 12));
+    // Pick 5–12 unique customers to review this vendor
+    const reviewers = pickN(customerUsers, rand(5, 12));
     const ratings: number[] = [];
 
-    for (const couple of reviewers) {
-      const key = `${vendor.id}:${couple.id}`;
+    for (const customer of reviewers) {
+      const key = `${vendor.id}:${customer.id}`;
       if (reviewedPairs.has(key)) continue;
       reviewedPairs.add(key);
 
@@ -315,7 +315,7 @@ async function main() {
       await prisma.review.create({
         data: {
           vendorId:  vendor.id,
-          userId:    couple.id,
+          userId:    customer.id,
           rating,
           comment:   Math.random() > 0.2 ? pick(REVIEW_COMMENTS) : null,
           createdAt,
@@ -349,9 +349,9 @@ async function main() {
   ];
 
   for (const vendor of vendorProfiles) {
-    const inquirers = pickN(coupleUsers, rand(4, 10));
+    const inquirers = pickN(customerUsers, rand(4, 10));
 
-    for (const couple of inquirers) {
+    for (const customer of inquirers) {
       const daysAgo = rand(1, 300);
       const eventDaysFromNow = rand(30, 600);
       const createdAt = new Date(Date.now() - daysAgo * 86400000);
@@ -360,10 +360,10 @@ async function main() {
       await prisma.inquiry.create({
         data: {
           vendorId:  vendor.id,
-          userId:    couple.id,
-          name:      couple.name,
-          email:     `couple${coupleUsers.indexOf(couple) + 1}@example.com`,
-          phone:     `+9476${String(2000000 + coupleUsers.indexOf(couple)).slice(1)}`,
+          userId:    customer.id,
+          name:      customer.name,
+          email:     `customer${customerUsers.indexOf(customer) + 1}@example.com`,
+          phone:     `+9476${String(2000000 + customerUsers.indexOf(customer)).slice(1)}`,
           eventDate: Math.random() > 0.2 ? eventDate : null,
           message:   pick(INQUIRY_MESSAGES),
           status:    pick(STATUSES),
@@ -403,15 +403,15 @@ async function main() {
 
   console.log('✅ Seed complete!\n');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(`  Users:     ${totalUsers}  (1 admin + ${VENDORS.length} vendors + ${COUPLE_NAMES.length} couples)`);
+  console.log(`  Users:     ${totalUsers}  (1 admin + ${VENDORS.length} vendors + ${CUSTOMER_NAMES.length} customers)`);
   console.log(`  Vendors:   ${totalVendors}`);
   console.log(`  Reviews:   ${totalReviews}`);
   console.log(`  Inquiries: ${totalInquiries}`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
   console.log('Test credentials:');
-  console.log('  Admin:  admin@weddingconnect.lk  / Admin@1234');
-  console.log('  Vendor: vendor1@weddingconnect.lk / Vendor@1234');
-  console.log('  Couple: couple1@example.com       / Couple@1234');
+  console.log('  Admin:  admin@vendorconnect.lk  / Admin@1234');
+  console.log('  Vendor: vendor1@vendorconnect.lk / Vendor@1234');
+  console.log('  Customer: customer1@example.com       / Customer@1234');
 }
 
 main()

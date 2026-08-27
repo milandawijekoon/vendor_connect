@@ -20,10 +20,10 @@ export class RegisterDto {
   })
   password!: string;
 
-  @ApiPropertyOptional({ enum: [Role.COUPLE, Role.VENDOR], default: Role.COUPLE })
+  @ApiPropertyOptional({ enum: [Role.CUSTOMER, Role.VENDOR], default: Role.CUSTOMER })
   @IsOptional()
-  @IsEnum([Role.COUPLE, Role.VENDOR], { message: 'role must be COUPLE or VENDOR' })
-  role?: Role.COUPLE | Role.VENDOR;
+  @IsEnum([Role.CUSTOMER, Role.VENDOR], { message: 'role must be CUSTOMER or VENDOR' })
+  role?: Role.CUSTOMER | Role.VENDOR;
 
   @ApiPropertyOptional()
   @IsOptional()

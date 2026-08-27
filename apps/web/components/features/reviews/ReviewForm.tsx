@@ -36,7 +36,7 @@ export function ReviewForm({ vendorSlug, onReviewSubmitted }: Props) {
     );
   }
 
-  if (user.role !== Role.COUPLE) return null;
+  if (user.role !== Role.CUSTOMER) return null;
 
   if (done) {
     return (

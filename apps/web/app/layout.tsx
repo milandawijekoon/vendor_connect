@@ -7,10 +7,10 @@ import { Footer } from '../components/ui/Footer';
 export const metadata: Metadata = {
   title: {
     template: '%s | VendorConnect',
-    default: 'VendorConnect — Find Your Perfect Wedding Vendors in Sri Lanka',
+    default: 'VendorConnect — Find Vendors for Any Occasion in Sri Lanka',
   },
   description:
-    'Discover and connect with top wedding vendors in Sri Lanka — photographers, venues, caterers, decorators and more.',
+    'Discover and connect with top event vendors in Sri Lanka for weddings, parties, and corporate events — photographers, venues, caterers, decorators and more.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

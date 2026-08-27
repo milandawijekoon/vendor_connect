@@ -34,12 +34,12 @@ const REVIEW_EXAMPLE: ReviewDto = {
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Roles(Role.COUPLE)
+  @Roles(Role.CUSTOMER)
   @Post(':slug/reviews')
   @ApiBearerAuth('jwt')
   @ApiOperation({
     summary: 'Submit review',
-    description: 'COUPLE accounts can leave one review per approved vendor. Rating updates the vendor\'s `avgRating` and `reviewCount` immediately.',
+    description: 'CUSTOMER accounts can leave one review per approved vendor. Rating updates the vendor\'s `avgRating` and `reviewCount` immediately.',
   })
   @ApiParam({ name: 'slug' })
   @ApiCreatedResponse({ schema: { example: REVIEW_EXAMPLE } })

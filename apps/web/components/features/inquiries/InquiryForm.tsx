@@ -92,7 +92,7 @@ export function InquiryForm({ vendorSlug, vendorName }: Props) {
           <input required type="email" value={form.email} onChange={set('email')} placeholder="you@example.com" style={input} onFocus={focusStyle} onBlur={blurStyle} />
         </Field>
 
-        <Field label="Wedding Date">
+        <Field label="Event Date">
           <input type="date" value={form.eventDate} onChange={set('eventDate')} style={input} onFocus={focusStyle} onBlur={blurStyle} />
         </Field>
 

@@ -48,7 +48,7 @@ const VENDOR_EXAMPLE: VendorProfileDto = {
   id: 'clvendor001',
   slug: 'alice-photography',
   businessName: 'Alice Photography',
-  description: 'Professional wedding photography with 10 years of experience across Sri Lanka.',
+  description: 'Professional event photography with 10 years of experience across Sri Lanka.',
   city: 'Colombo',
   address: '42 Galle Road, Colombo 3',
   priceMin: 50000,
@@ -66,8 +66,8 @@ const VENDOR_EXAMPLE: VendorProfileDto = {
 const IMAGE_EXAMPLE = {
   id: 'climg001',
   vendorId: 'clvendor001',
-  cloudinaryPublicId: 'wedding/portfolio/abc123',
-  url: 'https://res.cloudinary.com/demo/image/upload/wedding/portfolio/abc123.jpg',
+  cloudinaryPublicId: 'vendorconnect/portfolio/abc123',
+  url: 'https://res.cloudinary.com/demo/image/upload/vendorconnect/portfolio/abc123.jpg',
   order: 0,
   createdAt: '2026-08-24T00:00:00.000Z',
 };

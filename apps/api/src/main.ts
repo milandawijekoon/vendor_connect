@@ -37,9 +37,9 @@ async function bootstrap() {
       .setTitle('VendorConnect API')
       .setDescription(
         `## Overview
-REST API for the **VendorConnect** wedding-vendor marketplace (Sri Lanka).
+REST API for the **VendorConnect** event-vendor marketplace (Sri Lanka) — vendors for any occasion: weddings, corporate events, parties, and more.
 
-Couples discover and contact vendors; vendors manage their profiles and leads.
+Customers discover and contact vendors; vendors manage their profiles and leads.
 
 ## Authentication
 All protected endpoints require a **Bearer JWT** obtained from \`POST /auth/login\` or \`POST /auth/register\`.
@@ -52,7 +52,7 @@ Authorization: Bearer <token>
 ## Roles
 | Role | Description |
 |------|-------------|
-| \`COUPLE\` | Default role — browse vendors, submit inquiries, leave reviews |
+| \`CUSTOMER\` | Default role — browse vendors, submit inquiries, leave reviews |
 | \`VENDOR\` | Manage own vendor profile, portfolio images, and leads |
 | \`ADMIN\`  | Approve / reject / suspend vendor profiles |
 

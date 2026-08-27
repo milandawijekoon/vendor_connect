@@ -2,11 +2,11 @@ import Link from 'next/link';
 
 const COLS = [
   {
-    heading: 'For Couples',
+    heading: 'For Customers',
     links: [
       { label: 'Browse Vendors',   href: '/vendors' },
       { label: 'Photographers',    href: '/vendors?categorySlug=photography' },
-      { label: 'Wedding Venues',   href: '/vendors?categorySlug=venues' },
+      { label: 'Venues',           href: '/vendors?categorySlug=venues' },
       { label: 'Catering',         href: '/vendors?categorySlug=catering' },
       { label: 'Decorators',       href: '/vendors?categorySlug=decoration' },
     ],
@@ -44,11 +44,11 @@ export function Footer() {
         {/* Brand */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-            <span style={{ width: 32, height: 32, background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>💍</span>
+            <span style={{ width: 32, height: 32, background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>🎉</span>
             <span style={{ fontWeight: 800, fontSize: 18, color: '#FFFFFF' }}>VendorConnect</span>
           </div>
           <p style={{ fontSize: 14, lineHeight: 1.7, maxWidth: 260, color: '#94A3B8' }}>
-            Sri Lanka&apos;s most trusted wedding vendor marketplace. Find the perfect vendors for your dream wedding day.
+            Sri Lanka&apos;s most trusted event vendor marketplace. Find the perfect vendors for weddings, parties, corporate events and every occasion.
           </p>
 
           <div style={{ marginTop: 24 }}>
@@ -87,7 +87,7 @@ export function Footer() {
           <p style={{ fontSize: 13, color: '#475569' }}>
             © {new Date().getFullYear()} VendorConnect. All rights reserved.
           </p>
-          <p style={{ fontSize: 13, color: '#475569' }}>Made with ❤️ for Sri Lankan weddings</p>
+          <p style={{ fontSize: 13, color: '#475569' }}>Made with ❤️ in Sri Lanka</p>
         </div>
       </div>
     </footer>

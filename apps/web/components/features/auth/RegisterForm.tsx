@@ -58,11 +58,11 @@ export function RegisterForm() {
       {/* Role selector */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         {[
-          { value: 'COUPLE', icon: '💑', label: 'I\'m a Couple', sub: 'Looking for vendors' },
+          { value: 'CUSTOMER', icon: '🎉', label: 'I\'m a Customer', sub: 'Planning an event' },
           { value: 'VENDOR', icon: '🏢', label: 'I\'m a Vendor', sub: 'List my business' },
         ].map((opt) => (
           <label key={opt.value} style={{ cursor: 'pointer' }}>
-            <input type="radio" name="role" value={opt.value} defaultChecked={opt.value === 'COUPLE'} style={{ display: 'none' }} />
+            <input type="radio" name="role" value={opt.value} defaultChecked={opt.value === 'CUSTOMER'} style={{ display: 'none' }} />
             <div style={{
               padding: '14px 12px', textAlign: 'center',
               border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)',

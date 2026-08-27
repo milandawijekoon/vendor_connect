@@ -10,7 +10,7 @@ User ──1:1── VendorProfile ──1:N── PortfolioImage
   │                └──1:N── Inquiry
   │
   └──1:N── Review (as reviewer)
-  └──1:N── Inquiry (as couple, optional/nullable)
+  └──1:N── Inquiry (as customer, optional/nullable)
 ```
 
 ## 2. Prisma Schema (MVP)
@@ -28,7 +28,7 @@ datasource db {
 }
 
 enum Role {
-  COUPLE
+  CUSTOMER
   VENDOR
   ADMIN
 }
@@ -51,7 +51,7 @@ model User {
   id            String        @id @default(cuid())
   email         String        @unique
   passwordHash  String
-  role          Role          @default(COUPLE)
+  role          Role          @default(CUSTOMER)
   name          String
   phone         String?
   createdAt     DateTime      @default(now())
@@ -134,7 +134,7 @@ model Review {
   comment   String?       @db.Text
   createdAt DateTime      @default(now())
 
-  @@unique([vendorId, userId]) // one review per couple per vendor
+  @@unique([vendorId, userId]) // one review per customer per vendor
   @@index([vendorId])
 }
 
@@ -165,7 +165,7 @@ model Inquiry {
 - **`avgRating`/`reviewCount` are denormalized** onto `VendorProfile` for fast list/sort
   queries (avoids aggregating `Review` on every vendor listing page). Recalculated in the
   `ReviewsService` whenever a review is created/updated/deleted.
-- **Guest inquiries**: `Inquiry.userId` is nullable so a couple can submit an inquiry
+- **Guest inquiries**: `Inquiry.userId` is nullable so a customer can submit an inquiry
   without creating an account first — reduces friction, matches how WedMeGood-style
   lead capture actually converts.
 - **Indexes** are placed on the columns used in the vendor search/filter query

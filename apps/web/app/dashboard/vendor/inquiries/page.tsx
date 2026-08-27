@@ -76,7 +76,7 @@ export default function InquiriesPage() {
       ) : inquiries.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '64px 0', color: '#9ca3af' }}>
           <p style={{ fontSize: 18, margin: '0 0 8px' }}>No inquiries yet</p>
-          <p style={{ fontSize: 14 }}>Once couples contact you, their inquiries will appear here.</p>
+          <p style={{ fontSize: 14 }}>Once customers contact you, their inquiries will appear here.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

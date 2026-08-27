@@ -20,5 +20,5 @@ export const validationSchema = Joi.object({
   SMTP_PORT: Joi.number().default(587),
   SMTP_USER: Joi.string().optional().allow(''),
   SMTP_PASS: Joi.string().optional().allow(''),
-  SMTP_FROM: Joi.string().default('noreply@weddingconnect.lk'),
+  SMTP_FROM: Joi.string().default('noreply@vendorconnect.lk'),
 });

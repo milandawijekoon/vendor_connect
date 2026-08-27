@@ -33,7 +33,7 @@ POST /auth/login
 
 ## 4. Authorization Model
 
-Role-based access control with three roles: `COUPLE`, `VENDOR`, `ADMIN`.
+Role-based access control with three roles: `CUSTOMER`, `VENDOR`, `ADMIN`.
 
 - **`@Roles(Role.VENDOR)` decorator + `RolesGuard`** — protects vendor-only endpoints
   (e.g. `PATCH /vendors/:id`)
