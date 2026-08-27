@@ -26,7 +26,7 @@ async function main() {
     priceMin: v.priceMin,
     priceMax: v.priceMax,
     avgRating: v.avgRating,
-    status: v.status as string,
+    status: v.status,
     slug: v.slug,
   }));
 

@@ -133,7 +133,7 @@ export class VendorsService {
 
   async findPublic(slug: string): Promise<VendorProfileDto> {
     const vendor = await this.repo.findBySlug(slug);
-    if (!vendor || vendor.status !== VendorStatus.APPROVED) {
+    if (!vendor || (vendor.status as VendorStatus) !== VendorStatus.APPROVED) {
       throw new NotFoundException('Vendor not found');
     }
     return toDto(vendor);

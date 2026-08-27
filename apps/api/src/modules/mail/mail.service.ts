@@ -10,7 +10,7 @@ export class MailService implements OnModuleInit {
 
   constructor(private readonly config: ConfigService) {}
 
-  async onModuleInit() {
+  onModuleInit() {
     const host = this.config.get<string>('mail.host');
     if (!host) {
       this.logger.warn('SMTP not configured — email notifications disabled');
