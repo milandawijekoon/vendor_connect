@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { RegisterForm } from '../../../components/features/auth/RegisterForm';
+import { Logo } from '../../../components/ui/Logo';
 
 export const metadata: Metadata = { title: 'Create account' };
 
@@ -13,14 +14,11 @@ export default function RegisterPage() {
 
           <div style={{ padding: '36px 36px 32px' }}>
             <div style={{ textAlign: 'center', marginBottom: 28 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <span style={{ width: 36, height: 36, background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🎉</span>
-                <span style={{ fontWeight: 800, fontSize: 20, color: 'var(--primary)' }}>
-                  Vendor<span style={{ color: 'var(--text)' }}>Connect</span>
-                </span>
-              </div>
+              <Link href="/" aria-label="VendorConnect home" style={{ display: 'inline-flex', marginBottom: 14 }}>
+                <Logo size={28} />
+              </Link>
               <h1 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', color: 'var(--text)' }}>Create your account</h1>
-              <p style={{ margin: 0, color: 'var(--text-sec)', fontSize: 14 }}>Join thousands of customers &amp; vendors</p>
+              <p style={{ margin: 0, color: 'var(--text-sec)', fontSize: 14 }}>Join VendorConnect as a customer or vendor</p>
             </div>
 
             <RegisterForm />

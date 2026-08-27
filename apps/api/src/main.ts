@@ -72,6 +72,7 @@ All errors return:
       .addTag('health', 'API health check')
       .addTag('auth', 'Register, login, and retrieve the current user')
       .addTag('categories', 'Vendor service categories (seeded, read-only at MVP)')
+      .addTag('meta', 'Public aggregate stats and city lists for the marketing surface')
       .addTag('vendors', 'Vendor profile management, portfolio images, and public profiles')
       .addTag('inquiries', 'Send inquiries to vendors; vendor lead inbox')
       .addTag('reviews', 'Submit and read vendor reviews')

@@ -5,7 +5,7 @@ type Jestify<T> = { [K in keyof T]: jest.Mock };
 export interface PrismaMock {
   vendorProfile: Jestify<Pick<
     PrismaService['vendorProfile'],
-    'findFirst' | 'findMany' | 'count' | 'update' | 'groupBy'
+    'findFirst' | 'findMany' | 'count' | 'update' | 'groupBy' | 'aggregate'
   >>;
   user: Jestify<Pick<PrismaService['user'], 'count'>>;
   inquiry: Jestify<Pick<PrismaService['inquiry'], 'count'>>;
@@ -24,6 +24,7 @@ export function createPrismaMock(): PrismaMock {
       count: jest.fn(),
       update: jest.fn(),
       groupBy: jest.fn(),
+      aggregate: jest.fn(),
     },
     user: { count: jest.fn() },
     inquiry: { count: jest.fn() },

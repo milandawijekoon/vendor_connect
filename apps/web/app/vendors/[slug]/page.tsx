@@ -7,6 +7,8 @@ import type { PaginatedResponse, ReviewDto, VendorProfileDto } from '@vendorconn
 import { InquiryForm } from '../../../components/features/inquiries/InquiryForm';
 import { ReviewList } from '../../../components/features/reviews/ReviewList';
 import { ReviewForm } from '../../../components/features/reviews/ReviewForm';
+import { Icon, categoryIcon, type IconName } from '../../../components/ui/icons';
+import { Badge, LoadingBlock, Stars } from '../../../components/ui/primitives';
 
 const API_BASE = process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:4000/api/v1';
 
@@ -27,17 +29,6 @@ async function getReviews(slug: string): Promise<ReviewDto[]> {
   } catch { return []; }
 }
 
-function StarBar({ rating }: { rating: number }) {
-  const full = Math.round(rating);
-  return (
-    <span>
-      {Array.from({ length: 5 }, (_, i) => (
-        <span key={i} style={{ color: i < full ? 'var(--star)' : '#D1D5DB', fontSize: 20 }}>★</span>
-      ))}
-    </span>
-  );
-}
-
 export default function VendorProfilePage({ params }: { params: { slug: string } }) {
   const [vendor, setVendor] = useState<VendorProfileDto | null | undefined>(undefined);
   const [reviews, setReviews] = useState<ReviewDto[]>([]);
@@ -53,11 +44,8 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
 
   if (vendor === undefined) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>🎉</div>
-          <p style={{ color: 'var(--text-sec)' }}>Loading vendor…</p>
-        </div>
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <LoadingBlock label="Loading vendor…" />
       </div>
     );
   }
@@ -72,11 +60,14 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text-sec)' }}>
             <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Home</Link>
-            <span>›</span>
+            <Icon name="chevron-right" size={13} style={{ color: 'var(--text-muted)' }} />
             <Link href="/vendors" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Vendors</Link>
-            <span>›</span>
+            <Icon name="chevron-right" size={13} style={{ color: 'var(--text-muted)' }} />
             {vendor.categories[0] && (
-              <><Link href={`/vendors?categorySlug=${vendor.categories[0].slug}`} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{vendor.categories[0].name}</Link><span>›</span></>
+              <>
+                <Link href={`/vendors?categorySlug=${vendor.categories[0].slug}`} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{vendor.categories[0].name}</Link>
+                <Icon name="chevron-right" size={13} style={{ color: 'var(--text-muted)' }} />
+              </>
             )}
             <span style={{ color: 'var(--text)', fontWeight: 600 }}>{vendor.businessName}</span>
           </div>
@@ -89,20 +80,27 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
           <div>
             {/* Header */}
             <div style={{ marginBottom: 20 }}>
-              {vendor.categories.map((c) => (
-                <span key={c.id} className="badge badge-pink" style={{ marginRight: 6 }}>{c.name}</span>
-              ))}
+              <span style={{ display: 'inline-flex', gap: 6, flexWrap: 'wrap' }}>
+                {vendor.categories.map((c) => (
+                  <Badge key={c.id} tone="brand" icon={categoryIcon(c.slug)}>
+                    {c.name}
+                  </Badge>
+                ))}
+              </span>
               <h1 style={{ fontSize: 32, fontWeight: 800, color: 'var(--text)', margin: '10px 0 6px', lineHeight: 1.2 }}>
                 {vendor.businessName}
               </h1>
               <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-sec)', fontSize: 15 }}>
-                  <span>📍</span> {vendor.city}{vendor.address ? `, ${vendor.address}` : ''}
+                  <Icon name="map-pin" size={15} /> {vendor.city}
+                  {vendor.address ? `, ${vendor.address}` : ''}
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <StarBar rating={vendor.avgRating} />
+                  <Stars rating={vendor.avgRating} size={16} />
                   <span style={{ fontWeight: 700, fontSize: 16, color: 'var(--text)' }}>{vendor.avgRating.toFixed(1)}</span>
-                  <span style={{ color: 'var(--text-sec)', fontSize: 14 }}>({vendor.reviewCount} review{vendor.reviewCount !== 1 ? 's' : ''})</span>
+                  <span style={{ color: 'var(--text-sec)', fontSize: 14 }}>
+                    ({vendor.reviewCount} review{vendor.reviewCount !== 1 ? 's' : ''})
+                  </span>
                 </span>
               </div>
             </div>
@@ -124,13 +122,19 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
                 {images.length > 1 && (
                   <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
                     {images.map((img, i) => (
-                      <button key={img.id} onClick={() => setActiveImage(i)} style={{
-                        flexShrink: 0, width: 80, height: 60, padding: 0, border: 'none',
-                        borderRadius: 'var(--radius-sm)', overflow: 'hidden', cursor: 'pointer',
-                        outline: i === activeImage ? '2.5px solid var(--primary)' : 'none',
-                        opacity: i === activeImage ? 1 : 0.7,
-                        transition: 'opacity 0.15s',
-                      }}>
+                      <button
+                        key={img.id}
+                        onClick={() => setActiveImage(i)}
+                        aria-label={`View photo ${i + 1}`}
+                        aria-current={i === activeImage ? 'true' : undefined}
+                        style={{
+                          flexShrink: 0, width: 80, height: 60, padding: 0, border: 'none',
+                          borderRadius: 'var(--radius-sm)', overflow: 'hidden', cursor: 'pointer',
+                          outline: i === activeImage ? '2.5px solid var(--primary)' : '2.5px solid transparent',
+                          opacity: i === activeImage ? 1 : 0.7,
+                          transition: 'opacity 0.15s',
+                        }}
+                      >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={img.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </button>
@@ -148,17 +152,34 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
               borderRadius: 'var(--radius-lg)',
               overflow: 'hidden', marginBottom: 32,
             }}>
-              {[
-                { icon: '⭐', value: vendor.avgRating.toFixed(1), label: 'Avg Rating' },
-                { icon: '💬', value: vendor.reviewCount, label: 'Reviews' },
-                ...(vendor.priceMin ?? vendor.priceMax ? [{ icon: '💰', value: `LKR ${(vendor.priceMin ?? vendor.priceMax ?? 0).toLocaleString()}+`, label: 'Starting from' }] : []),
-                { icon: '👤', value: vendor.owner.name, label: 'Contact Person' },
-              ].map((s, i, arr) => (
-                <div key={String(s.label)} style={{
-                  flex: 1, textAlign: 'center', padding: '16px 12px',
-                  borderRight: i < arr.length - 1 ? '1px solid var(--primary-light)' : 'none',
-                }}>
-                  <div style={{ fontSize: 18, marginBottom: 4 }}>{s.icon}</div>
+              {(
+                [
+                  { icon: 'star-filled', value: vendor.avgRating.toFixed(1), label: 'Avg Rating' },
+                  { icon: 'message-circle', value: vendor.reviewCount, label: 'Reviews' },
+                  ...(vendor.priceMin ?? vendor.priceMax
+                    ? [
+                        {
+                          icon: 'wallet',
+                          value: `LKR ${(vendor.priceMin ?? vendor.priceMax ?? 0).toLocaleString()}+`,
+                          label: 'Starting from',
+                        },
+                      ]
+                    : []),
+                  { icon: 'user', value: vendor.owner.name, label: 'Contact Person' },
+                ] as { icon: IconName; value: React.ReactNode; label: string }[]
+              ).map((s, i, arr) => (
+                <div
+                  key={s.label}
+                  style={{
+                    flex: 1,
+                    textAlign: 'center',
+                    padding: '16px 12px',
+                    borderRight: i < arr.length - 1 ? '1px solid var(--primary-light)' : 'none',
+                  }}
+                >
+                  <div style={{ color: 'var(--primary)', display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
+                    <Icon name={s.icon} size={18} />
+                  </div>
                   <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--text)' }}>{s.value}</div>
                   <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>{s.label}</div>
                 </div>
@@ -181,7 +202,7 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
                 </h2>
                 {vendor.reviewCount > 0 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <StarBar rating={vendor.avgRating} />
+                    <Stars rating={vendor.avgRating} size={15} />
                     <span style={{ fontWeight: 700, color: 'var(--text)' }}>{vendor.avgRating.toFixed(1)}/5</span>
                   </div>
                 )}

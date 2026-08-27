@@ -16,6 +16,7 @@ import { MailModule } from './modules/mail/mail.module';
 import { InquiriesModule } from './modules/inquiries/inquiries.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { MetaModule } from './modules/meta/meta.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 
@@ -40,6 +41,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     InquiriesModule,
     ReviewsModule,
     AdminModule,
+    MetaModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

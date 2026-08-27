@@ -1,26 +1,27 @@
 import type { Metadata } from 'next';
 import { ContentPage } from '../../components/ui/ContentPage';
+import { Icon, type IconName } from '../../components/ui/icons';
 
 export const metadata: Metadata = {
   title: 'Contact',
   description: 'Get in touch with the VendorConnect team — support for customers and vendors across Sri Lanka.',
 };
 
-const CHANNELS = [
+const CHANNELS: { icon: IconName; label: string; value: string; href: string }[] = [
   {
-    icon: '✉️',
+    icon: 'mail',
     label: 'General & support',
     value: 'hello@vendorconnect.lk',
     href: 'mailto:hello@vendorconnect.lk',
   },
   {
-    icon: '🏢',
+    icon: 'building',
     label: 'Vendor onboarding',
     value: 'vendors@vendorconnect.lk',
     href: 'mailto:vendors@vendorconnect.lk',
   },
   {
-    icon: '📞',
+    icon: 'phone',
     label: 'Phone (Mon–Fri, 9am–6pm)',
     value: '+94 11 234 5678',
     href: 'tel:+94112345678',
@@ -49,7 +50,21 @@ export default function ContactPage() {
               background: 'var(--white)',
             }}
           >
-            <span style={{ fontSize: 26 }}>{c.icon}</span>
+            <span
+              style={{
+                width: 42,
+                height: 42,
+                flexShrink: 0,
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--primary-light)',
+                color: 'var(--primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Icon name={c.icon} size={20} />
+            </span>
             <div>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-sec)' }}>{c.label}</div>
               <a href={c.href} style={{ fontSize: 16, fontWeight: 600, color: 'var(--primary)' }}>

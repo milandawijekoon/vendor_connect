@@ -2,6 +2,7 @@ export * from './types/enums';
 export * from './types/api';
 export * from './types/auth';
 export * from './types/category';
+export * from './types/meta';
 export * from './types/vendor';
 export * from './types/inquiry';
 export * from './types/review';

@@ -3,9 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { VendorProfileDto } from '@vendorconnect/shared';
+import { Role } from '@vendorconnect/shared';
 import { ApiClientError } from '../../../../lib/api/client';
 import { vendorsApi } from '../../../../lib/api/vendors';
 import { VendorProfileForm } from '../../../../components/features/vendors/VendorProfileForm';
+import { DashboardShell } from '../../../../components/ui/DashboardShell';
+import { LoadingBlock, PageHeader } from '../../../../components/ui/primitives';
 
 export default function EditVendorProfilePage() {
   const [existing, setExisting] = useState<VendorProfileDto | undefined>(undefined);
@@ -17,7 +20,6 @@ export default function EditVendorProfilePage() {
       .getOwn()
       .then(setExisting)
       .catch((err) => {
-        // 404 = no profile yet — render create form
         if (!(err instanceof ApiClientError && err.statusCode === 404)) {
           console.error(err);
         }
@@ -25,15 +27,23 @@ export default function EditVendorProfilePage() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  if (isLoading) return <main style={{ padding: 32 }}>Loading…</main>;
-
   return (
-    <main style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
-      <h1 style={{ marginBottom: 24 }}>{existing ? 'Edit profile' : 'Create your vendor profile'}</h1>
-      <VendorProfileForm
-        {...(existing ? { initialValues: existing } : {})}
-        onSuccess={() => router.push('/dashboard/vendor')}
+    <DashboardShell requireRole={Role.VENDOR}>
+      <PageHeader
+        eyebrow="Vendor"
+        title={existing ? 'Edit business profile' : 'Create your business profile'}
+        description="This is what customers see on your public listing."
       />
-    </main>
+      {isLoading ? (
+        <LoadingBlock />
+      ) : (
+        <div style={{ maxWidth: 640 }}>
+          <VendorProfileForm
+            {...(existing ? { initialValues: existing } : {})}
+            onSuccess={() => router.push('/dashboard/vendor')}
+          />
+        </div>
+      )}
+    </DashboardShell>
   );
 }

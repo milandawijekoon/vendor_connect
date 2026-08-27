@@ -2,19 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import type { InquiryDto, InquiryStatus } from '@vendorconnect/shared';
-import { InquiryStatus as IS } from '@vendorconnect/shared';
+import { InquiryStatus as IS, Role } from '@vendorconnect/shared';
 import { inquiriesApi } from '../../../../lib/api/inquiries';
 import { ApiClientError } from '../../../../lib/api/client';
-
-const STATUS_META: Record<InquiryStatus, { label: string; color: string; bg: string }> = {
-  NEW:       { label: 'New',       color: '#92400e', bg: '#fef3c7' },
-  CONTACTED: { label: 'Contacted', color: '#1e40af', bg: '#dbeafe' },
-  CONFIRMED: { label: 'Confirmed', color: '#14532d', bg: '#dcfce7' },
-  CLOSED:    { label: 'Closed',    color: '#374151', bg: '#f3f4f6' },
-};
+import { DashboardShell } from '../../../../components/ui/DashboardShell';
+import {
+  Badge,
+  Button,
+  EmptyState,
+  INQUIRY_STATUS_TONE,
+  LoadingBlock,
+  PageHeader,
+  Select,
+} from '../../../../components/ui/primitives';
+import { Icon } from '../../../../components/ui/icons';
 
 const NEXT_STATUS: Partial<Record<InquiryStatus, InquiryStatus[]>> = {
-  [IS.NEW]:       [IS.CONTACTED, IS.CLOSED],
+  [IS.NEW]: [IS.CONTACTED, IS.CLOSED],
   [IS.CONTACTED]: [IS.CONFIRMED, IS.CLOSED],
   [IS.CONFIRMED]: [IS.CLOSED],
 };
@@ -47,98 +51,115 @@ export default function InquiriesPage() {
   };
 
   return (
-    <main style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h1 style={{ margin: 0, fontSize: 24 }}>Inquiries</h1>
-
-        {/* Status filter */}
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as InquiryStatus | '')}
-          style={{
-            padding: '8px 12px',
-            border: '1px solid #d1d5db',
-            borderRadius: 6,
-            fontSize: 14,
-            background: 'transparent',
-            color: 'inherit',
-          }}
-        >
-          <option value="">All statuses</option>
-          {Object.values(IS).map((s) => (
-            <option key={s} value={s}>{STATUS_META[s].label}</option>
-          ))}
-        </select>
-      </div>
+    <DashboardShell requireRole={Role.VENDOR}>
+      <PageHeader
+        eyebrow="Vendor"
+        title="Inquiries"
+        description="Leads from customers who contacted you through your listing."
+        actions={
+          <div style={{ minWidth: 180 }}>
+            <Select value={filter} onChange={(e) => setFilter(e.target.value as InquiryStatus | '')} aria-label="Filter by status">
+              <option value="">All statuses</option>
+              {Object.values(IS).map((s) => (
+                <option key={s} value={s}>
+                  {INQUIRY_STATUS_TONE[s]?.label ?? s}
+                </option>
+              ))}
+            </Select>
+          </div>
+        }
+      />
 
       {isLoading ? (
-        <p style={{ color: '#9ca3af' }}>Loading…</p>
+        <LoadingBlock />
       ) : inquiries.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px 0', color: '#9ca3af' }}>
-          <p style={{ fontSize: 18, margin: '0 0 8px' }}>No inquiries yet</p>
-          <p style={{ fontSize: 14 }}>Once customers contact you, their inquiries will appear here.</p>
-        </div>
+        <EmptyState
+          icon="inbox"
+          title="No inquiries yet"
+          body="When customers contact you through your listing, their messages appear here."
+        />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {inquiries.map((inq) => {
-            const meta = STATUS_META[inq.status];
+            const meta = INQUIRY_STATUS_TONE[inq.status] ?? { tone: 'neutral' as const, label: inq.status };
             const nextOptions = NEXT_STATUS[inq.status] ?? [];
             return (
               <div
                 key={inq.id}
-                style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16 }}
+                style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: 18 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: 12,
+                    flexWrap: 'wrap',
+                    gap: 10,
+                  }}
+                >
                   <div>
-                    <p style={{ margin: '0 0 2px', fontWeight: 600, fontSize: 15 }}>{inq.name}</p>
-                    <p style={{ margin: 0, color: '#6b7280', fontSize: 13 }}>
-                      {inq.email} · {inq.phone}
-                      {inq.eventDate && ` · ${new Date(inq.eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+                    <p style={{ margin: '0 0 3px', fontWeight: 700, fontSize: 15 }}>{inq.name}</p>
+                    <p
+                      style={{
+                        margin: 0,
+                        color: 'var(--text-sec)',
+                        fontSize: 13,
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 10,
+                      }}
+                    >
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <Icon name="mail" size={13} />
+                        {inq.email}
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <Icon name="phone" size={13} />
+                        {inq.phone}
+                      </span>
+                      {inq.eventDate && (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <Icon name="calendar" size={13} />
+                          {new Date(inq.eventDate).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </span>
+                      )}
                     </p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    <span
-                      style={{
-                        padding: '3px 10px',
-                        borderRadius: 999,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        color: meta.color,
-                        background: meta.bg,
-                      }}
-                    >
-                      {meta.label}
-                    </span>
+                    <Badge tone={meta.tone}>{meta.label}</Badge>
                     {nextOptions.map((next) => (
-                      <button
+                      <Button
                         key={next}
-                        disabled={updating === inq.id}
+                        variant="outline"
+                        size="sm"
+                        loading={updating === inq.id}
                         onClick={() => void updateStatus(inq.id, next)}
-                        style={{
-                          padding: '4px 10px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: 6,
-                          fontSize: 12,
-                          cursor: 'pointer',
-                          background: 'transparent',
-                          color: 'inherit',
-                          opacity: updating === inq.id ? 0.5 : 1,
-                        }}
                       >
-                        → {STATUS_META[next].label}
-                      </button>
+                        Mark {INQUIRY_STATUS_TONE[next]?.label.toLowerCase() ?? next}
+                      </Button>
                     ))}
                   </div>
                 </div>
-                <p style={{ margin: 0, lineHeight: 1.6, color: '#374151', fontSize: 14 }}>{inq.message}</p>
-                <p style={{ margin: '8px 0 0', color: '#9ca3af', fontSize: 12 }}>
-                  {new Date(inq.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                <p style={{ margin: 0, lineHeight: 1.6, color: 'var(--text)', fontSize: 14 }}>{inq.message}</p>
+                <p style={{ margin: '10px 0 0', color: 'var(--text-muted)', fontSize: 12 }}>
+                  {new Date(inq.createdAt).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </p>
               </div>
             );
           })}
         </div>
       )}
-    </main>
+    </DashboardShell>
   );
 }
