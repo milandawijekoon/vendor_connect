@@ -1,27 +1,38 @@
 #!/usr/bin/env bash
-# Run once on a fresh EC2 instance (Ubuntu 22.04, t3.micro) over SSH:
-#   scp infra/ec2-bootstrap.sh ubuntu@<elastic-ip>:~/
-#   ssh ubuntu@<elastic-ip> 'chmod +x ec2-bootstrap.sh && ./ec2-bootstrap.sh'
+# Run once on a fresh EC2 instance (Amazon Linux 2023, t3.micro) over SSH:
+#   scp infra/ec2-bootstrap.sh ec2-user@<elastic-ip>:~/
+#   ssh ec2-user@<elastic-ip> 'chmod +x ec2-bootstrap.sh && ./ec2-bootstrap.sh'
 #
-# Installs Docker, adds a 1GB swap file (t3.micro only has 1GB RAM — builds
-# need the headroom), and clones this repo into /opt/vendor-connect.
+# Installs Docker + the Compose plugin (AL2023 doesn't ship the plugin in its
+# own repos, so it's fetched from Docker's official plugin release), adds a
+# 1GB swap file (t3.micro only has 1GB RAM — builds need the headroom), and
+# clones this repo into /opt/vendor-connect.
 set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/milandawijekoon/vendor_connect.git}"
 DEPLOY_DIR="/opt/vendor-connect"
+COMPOSE_VERSION="v2.29.7"
 
 echo "==> Updating packages"
-sudo apt-get update -y
-sudo apt-get upgrade -y
+sudo dnf update -y
 
-echo "==> Installing Docker Engine + compose plugin"
+echo "==> Installing Docker Engine"
 if ! command -v docker >/dev/null 2>&1; then
-  curl -fsSL https://get.docker.com | sudo sh
+  sudo dnf install -y docker
+  sudo systemctl enable --now docker
   sudo usermod -aG docker "$USER"
 fi
 
+echo "==> Installing Docker Compose plugin"
+mkdir -p ~/.docker/cli-plugins
+if [ ! -f ~/.docker/cli-plugins/docker-compose ]; then
+  curl -fsSL "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-$(uname -m)" \
+    -o ~/.docker/cli-plugins/docker-compose
+  chmod +x ~/.docker/cli-plugins/docker-compose
+fi
+
 echo "==> Installing git"
-sudo apt-get install -y git
+sudo dnf install -y git
 
 echo "==> Adding 1GB swap (t3.micro has 1GB RAM — Next.js/Nest builds need it)"
 if [ ! -f /swapfile ]; then
@@ -66,6 +77,6 @@ echo "Next steps:"
 echo "  1. Edit ${DEPLOY_DIR}/.env with real production values."
 echo "  2. Edit ${DEPLOY_DIR}/docker/Caddyfile with your real domain."
 echo "  3. Add the GitHub Actions deploy public key to ~/.ssh/authorized_keys"
-echo "     (or reuse this instance's existing key pair, restricted to this IP in the EC2 security group)."
+echo "     (this instance's own key pair is for YOUR access only — keep the CI key separate)."
 echo "  4. Log out and back in (or run 'newgrp docker') so the docker group membership takes effect."
 echo "  5. From ${DEPLOY_DIR}, run: docker compose -f docker-compose.prod.yml build && docker compose -f docker-compose.prod.yml up -d"

@@ -1,4 +1,8 @@
-your-domain.com {
+{
+	auto_https off
+}
+
+:80 {
 	handle /api/* {
 		reverse_proxy api:4000
 	}
