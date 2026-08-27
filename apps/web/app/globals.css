@@ -1,35 +1,37 @@
-/* ── Design tokens — Ceylon Emerald ──────────────────────────────────────── */
+/* ── Design tokens — Ceremony Plum ───────────────────────────────────────── */
 :root {
-  --primary:       #1F6B4E;
-  --primary-dark:  #154B37;
-  --primary-light: #E1F0E5;
-  --primary-bg:    #F6F9F6;
-  --accent:        #D4A93A;
+  --primary:       #5B2A63;   /* deep aubergine */
+  --primary-dark:  #431E4A;
+  --primary-light: #F0E4F2;   /* mauve tint — chips, badge fills */
+  --primary-bg:    #F8F4F9;   /* tinted section bands */
+  --accent:        #C79A3E;   /* antique gold */
 
-  --text:          #122019;
-  --text-sec:      #5C6E64;
-  --text-muted:    #8CA096;
+  --text:          #1E1621;
+  --text-sec:      #5E5563;
+  --text-muted:    #79707F;
 
-  --border:        #DCE9DF;
-  --border-light:  #EDF4EE;
+  --border:        #E8DEEA;
+  --border-light:  #F2ECF4;
 
-  --white:         #FFFFFF;
-  --surface:       #F6F9F6;
-  --star:          #D4A93A;
+  --white:         #FFFFFF;   /* raised surface — cards, inputs, nav */
+  --bg:            #FFFFFF;   /* page background */
+  --on-primary:    #FFFFFF;   /* text/icons on primary & danger fills */
+  --surface:       #F8F4F9;   /* sunken surface */
+  --star:          #D8A73C;
 
-  --danger:        #DC2626;
-  --danger-dark:   #B91C1C;
-  --danger-bg:     #FEF2F2;
-  --danger-border: #FECACA;
-  --warning:       #B45309;
-  --warning-bg:    #FFFBEB;
-  --warning-border:#FCD34D;
-  --success:       #15803D;
-  --success-bg:    #F0FDF4;
-  --success-border:#BBF7D0;
-  --info:          #1D4ED8;
-  --info-bg:       #EFF6FF;
-  --info-border:   #BFDBFE;
+  --danger:        #C4362B;
+  --danger-dark:   #A62B22;
+  --danger-bg:     #FCEEEC;
+  --danger-border: #F3C9C4;
+  --warning:       #B4690E;
+  --warning-bg:    #FFF7EC;
+  --warning-border:#F3D3A0;
+  --success:       #2F7D51;
+  --success-bg:    #EEF7F1;
+  --success-border:#BEE3CC;
+  --info:          #4667C7;
+  --info-bg:       #EEF1FB;
+  --info-border:   #C7D2F2;
 
   --radius-xs:     4px;
   --radius-sm:     6px;
@@ -49,9 +51,55 @@
   --space-6:       32px;
   --space-8:       48px;
 
-  --focus-ring:    0 0 0 3px rgba(31,107,78,0.28);
+  --focus-ring:    0 0 0 3px rgba(91,42,99,0.28);
 
   --nav-h:         64px;
+}
+
+/* ── Dark palette ────────────────────────────────────────────────────────────
+   Wired at the token level. Inert until something sets data-theme="dark" on
+   <html> (needs a UI toggle + a visual pass before shipping). To enable it by
+   OS preference, add the same block inside
+   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) { … } }. */
+:root[data-theme="dark"] {
+  --primary:       #8E4E9A;
+  --primary-dark:  #7A3E86;
+  --primary-light: #2C1F33;
+  --primary-bg:    #1C1522;
+  --accent:        #D9B36A;
+
+  --text:          #ECE6EF;
+  --text-sec:      #B3A9BB;
+  --text-muted:    #8B8194;
+
+  --border:        #2F2439;
+  --border-light:  #241C2D;
+
+  --white:         #1B1524;   /* raised surface */
+  --bg:            #120E1A;    /* page background */
+  --on-primary:    #FFFFFF;
+  --surface:       #0E0A14;    /* sunken */
+  --star:          #E7C260;
+
+  --danger:        #F1A7A0;
+  --danger-dark:   #F1A7A0;
+  --danger-bg:     rgba(196,54,43,0.16);
+  --danger-border: rgba(243,201,196,0.24);
+  --warning:       #E8B872;
+  --warning-bg:    rgba(180,105,14,0.16);
+  --warning-border:rgba(243,211,160,0.22);
+  --success:       #7FD3A5;
+  --success-bg:    rgba(47,125,81,0.18);
+  --success-border:rgba(190,227,204,0.24);
+  --info:          #A9BEF0;
+  --info-bg:       rgba(70,103,199,0.18);
+  --info-border:   rgba(199,210,242,0.24);
+
+  --shadow-sm:     0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:     0 2px 12px rgba(0,0,0,0.5);
+  --shadow-lg:     0 8px 32px rgba(0,0,0,0.6);
+
+  --focus-ring:    0 0 0 3px rgba(142,78,154,0.4);
 }
 
 /* ── Reset & base ────────────────────────────────────────────────────────── */
@@ -64,7 +112,7 @@ body {
   font-size: 15px;
   line-height: 1.6;
   color: var(--text);
-  background: var(--white);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -81,7 +129,7 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   padding: 11px 28px;
   background: var(--primary);
-  color: var(--white);
+  color: var(--on-primary);
   border: none; border-radius: var(--radius-md);
   font-size: 15px; font-weight: 600;
   cursor: pointer; transition: background 0.18s;
@@ -193,7 +241,7 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   border-color: var(--primary);
   background: var(--primary-bg);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(31,107,78,0.15);
+  box-shadow: 0 6px 20px rgba(91,42,99,0.15);
 }
 
 .city-card {
@@ -293,7 +341,7 @@ textarea:focus-visible,
 .btn:disabled, .btn[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }
 .btn svg { flex-shrink: 0; }
 
-.btn--primary { background: var(--primary); color: var(--white); }
+.btn--primary { background: var(--primary); color: var(--on-primary); }
 .btn--primary:hover:not(:disabled) { background: var(--primary-dark); }
 
 .btn--outline { background: var(--white); color: var(--primary); border-color: var(--primary); }
@@ -302,7 +350,7 @@ textarea:focus-visible,
 .btn--ghost { background: transparent; color: var(--text-sec); border-color: var(--border); }
 .btn--ghost:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
 
-.btn--danger { background: var(--danger); color: var(--white); }
+.btn--danger { background: var(--danger); color: var(--on-primary); }
 .btn--danger:hover:not(:disabled) { background: var(--danger-dark); }
 
 .btn--sm { padding: 7px 13px; font-size: 13px; border-radius: var(--radius-sm); }
@@ -445,8 +493,8 @@ textarea:focus-visible,
   transition: background 0.14s, color 0.14s;
 }
 .dash-nav-link:hover { background: var(--primary-bg); color: var(--primary); }
-.dash-nav-link--active { background: var(--primary); color: var(--white); font-weight: 600; }
-.dash-nav-link--active:hover { background: var(--primary); color: var(--white); }
+.dash-nav-link--active { background: var(--primary); color: var(--on-primary); font-weight: 600; }
+.dash-nav-link--active:hover { background: var(--primary); color: var(--on-primary); }
 
 @media (max-width: 860px) {
   .dash-shell { grid-template-columns: 1fr; gap: 20px; }

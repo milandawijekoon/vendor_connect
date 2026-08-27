@@ -19,7 +19,7 @@ export function ContentPage({
     <>
       <section
         style={{
-          background: 'linear-gradient(135deg,#0A1712 0%,#123423 60%,#1F6B4E 100%)',
+          background: 'linear-gradient(135deg,#140A17 0%,#2A1430 60%,#5B2A63 100%)',
           padding: '64px 20px 56px',
         }}
       >
@@ -31,7 +31,7 @@ export function ContentPage({
                 fontWeight: 600,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
-                color: '#8FD9B5',
+                color: '#DAB7E0',
                 marginBottom: 14,
               }}
             >

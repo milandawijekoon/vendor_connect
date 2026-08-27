@@ -10,15 +10,6 @@ export const metadata: Metadata = {
 // Always reflect live marketplace figures rather than build-time data.
 export const dynamic = 'force-dynamic';
 
-const CITY_GRADIENTS = [
-  'linear-gradient(135deg,#1F6B4E,#D4A93A)',
-  'linear-gradient(135deg,#154B37,#1F6B4E)',
-  'linear-gradient(135deg,#0F766E,#1F6B4E)',
-  'linear-gradient(135deg,#B25F1D,#D4A93A)',
-  'linear-gradient(135deg,#2E7D5B,#0F766E)',
-  'linear-gradient(135deg,#3D6B4F,#D4A93A)',
-];
-
 const STEPS = [
   {
     num: '01',
@@ -67,7 +58,7 @@ export default async function HomePage() {
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
-          background: 'linear-gradient(135deg,#0A1712 0%,#123423 40%,#1F6B4E 100%)',
+          background: 'linear-gradient(135deg,#140A17 0%,#2A1430 40%,#5B2A63 100%)',
           padding: '80px 20px 100px',
           textAlign: 'center',
           position: 'relative',
@@ -98,7 +89,7 @@ export default async function HomePage() {
               fontWeight: 600,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: '#8FD9B5',
+              color: '#DAB7E0',
               marginBottom: 18,
             }}
           >
@@ -107,7 +98,7 @@ export default async function HomePage() {
           <h1 style={{ fontSize: 'clamp(36px,6vw,60px)', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.12, marginBottom: 20 }}>
             Find the Right Vendor
             <br />
-            <span style={{ color: '#8FD9B5' }}>for Every Occasion</span>
+            <span style={{ color: '#DAB7E0' }}>for Every Occasion</span>
           </h1>
           <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.75)', marginBottom: 44, lineHeight: 1.6 }}>
             Photographers, venues, caterers, makeup artists and more —
@@ -280,12 +271,12 @@ export default async function HomePage() {
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 16 }}>
-              {heroCities.map((city, i) => (
+              {heroCities.map((city) => (
                 <Link
                   key={city.city}
                   href={`/vendors?city=${encodeURIComponent(city.city)}`}
                   className="city-card"
-                  style={{ background: CITY_GRADIENTS[i % CITY_GRADIENTS.length] }}
+                  style={{ background: 'var(--primary)' }}
                 >
                   <div style={{ fontSize: 20, fontWeight: 800, color: '#FFFFFF', marginBottom: 4 }}>{city.city}</div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)' }}>
@@ -361,7 +352,7 @@ export default async function HomePage() {
 
       {/* ── VENDOR CTA ───────────────────────────────────────── */}
       <section
-        style={{ background: 'linear-gradient(135deg,#0A1712 0%,#123423 100%)', padding: '72px 20px', textAlign: 'center' }}
+        style={{ background: 'linear-gradient(135deg,#140A17 0%,#2A1430 100%)', padding: '72px 20px', textAlign: 'center' }}
       >
         <div style={{ maxWidth: 580, margin: '0 auto' }}>
           <p
@@ -370,7 +361,7 @@ export default async function HomePage() {
               fontWeight: 600,
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
-              color: '#8FD9B5',
+              color: '#DAB7E0',
               marginBottom: 14,
             }}
           >

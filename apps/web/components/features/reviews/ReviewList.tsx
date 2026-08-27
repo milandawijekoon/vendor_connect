@@ -7,7 +7,7 @@ interface Props {
 
 function InitialAvatar({ name }: { name: string }) {
   const initial = name.charAt(0).toUpperCase();
-  const palette = ['#1F6B4E', '#0F766E', '#B25F1D', '#3D6B4F', '#154B37'];
+  const palette = ['#5B2A63', '#7A4383', '#8A5A3C', '#4A3A6B', '#431E4A'];
   const color = palette[initial.charCodeAt(0) % palette.length]!;
   return (
     <div

@@ -36,13 +36,13 @@ export async function Footer() {
   const cities = (await getCities()).slice(0, 8);
 
   return (
-    <footer style={{ background: '#0E1A14', color: '#CBD5E1', marginTop: 64 }}>
+    <footer style={{ background: '#180D1C', color: '#CFC6D4', marginTop: 64 }}>
       <div
         className="container footer-grid"
         style={{ padding: '56px 20px 40px', display: 'grid', gridTemplateColumns: '1.4fr repeat(3, 1fr)', gap: 48 }}
       >
         <div>
-          <Logo size={28} wordmarkColor="#FFFFFF" brandColor="#8FD9B5" />
+          <Logo size={28} wordmarkColor="#FFFFFF" brandColor="#DAB7E0" />
           <p style={{ fontSize: 14, lineHeight: 1.7, maxWidth: 280, color: '#94A3B8', marginTop: 14 }}>
             Sri Lanka&apos;s event vendor marketplace. Find trusted vendors for weddings, parties,
             corporate events and every occasion in between.
@@ -100,7 +100,7 @@ export async function Footer() {
         ))}
       </div>
 
-      <div style={{ borderTop: '1px solid #1B2B22' }}>
+      <div style={{ borderTop: '1px solid #2E1E34' }}>
         <div
           className="container"
           style={{
