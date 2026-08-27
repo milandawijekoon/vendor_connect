@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import type { AdminVendorDto, VendorStatus } from '@vendorconnect/shared';
@@ -43,6 +43,14 @@ const TABS: { label: string; value: VendorStatus | '' }[] = [
 ];
 
 export default function AdminVendorsPage() {
+  return (
+    <Suspense fallback={<main style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 16px' }}><p style={{ color: '#9ca3af' }}>Loading…</p></main>}>
+      <AdminVendorsPageInner />
+    </Suspense>
+  );
+}
+
+function AdminVendorsPageInner() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
