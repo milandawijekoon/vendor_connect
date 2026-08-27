@@ -53,6 +53,7 @@ export function Navbar() {
           <NavLink href="/vendors?categorySlug=photography">Photographers</NavLink>
           <NavLink href="/vendors?categorySlug=venues">Venues</NavLink>
           <NavLink href="/vendors?categorySlug=catering">Catering</NavLink>
+          <NavLink href="/about">About</NavLink>
         </nav>
 
         {/* Auth area */}

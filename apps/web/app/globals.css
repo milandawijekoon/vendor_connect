@@ -211,3 +211,26 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   transition: border-color 0.15s, color 0.15s;
 }
 .footer-city-pill:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ── Prose (static content pages) ──────────────────────────────────────── */
+.prose { color: var(--text-sec); font-size: 15px; line-height: 1.75; }
+.prose h2 {
+  font-size: 21px; font-weight: 700; color: var(--text);
+  margin: 40px 0 12px;
+}
+.prose h2:first-child { margin-top: 0; }
+.prose h3 {
+  font-size: 16px; font-weight: 700; color: var(--text);
+  margin: 28px 0 8px;
+}
+.prose p { margin-bottom: 16px; }
+.prose ul, .prose ol { margin: 0 0 16px 22px; }
+.prose li { margin-bottom: 8px; }
+.prose a { color: var(--primary); font-weight: 500; text-decoration: underline; }
+.prose a:hover { color: var(--primary-dark); }
+.prose strong { color: var(--text); font-weight: 600; }
+.prose .updated {
+  font-size: 13px; color: var(--text-muted);
+  margin-bottom: 32px; padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
