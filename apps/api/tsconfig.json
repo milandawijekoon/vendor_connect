@@ -14,5 +14,5 @@
     }
   },
   "include": ["src", "../../packages/shared/src"],
-  "exclude": ["dist", "node_modules", "**/*.spec.ts", "**/*.e2e-spec.ts"]
+  "exclude": ["dist", "node_modules"]
 }
