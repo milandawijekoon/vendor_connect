@@ -241,11 +241,15 @@ export class VendorsService {
         return toPage(vendors.map(toListItemDto), total, page, limit);
       }
 
-      // Meilisearch unavailable — MySQL LIKE fallback
+      // Meilisearch unavailable or index empty — MySQL LIKE fallback.
+      // Covers the same fields Meilisearch searches (name, city, category, description)
+      // so keyword queries like "photography" or "band" still return results.
       conditions.push({
         OR: [
           { businessName: { contains: dto.q } },
           { city: { contains: dto.q } },
+          { description: { contains: dto.q } },
+          { categories: { some: { category: { name: { contains: dto.q } } } } },
         ],
       });
     }

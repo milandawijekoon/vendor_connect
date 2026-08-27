@@ -17,20 +17,36 @@ export interface VendorDocument {
   slug: string;
 }
 
+const RECONNECT_COOLDOWN_MS = 30_000;
+
 @Injectable()
 export class SearchService implements OnModuleInit {
   private readonly logger = new Logger(SearchService.name);
   private client: MeiliSearch | null = null;
   private ready = false;
+  private lastConnectAttempt = 0;
 
   constructor(private readonly config: ConfigService) {}
 
   async onModuleInit() {
+    await this.connect();
+  }
+
+  /**
+   * (Re)establish the Meilisearch connection and ensure index settings.
+   * Safe to call repeatedly — throttled so a down Meilisearch doesn't hammer the network
+   * on every request. Lets the service self-heal after a startup race or a Meili restart.
+   */
+  private async connect(): Promise<void> {
     const host = this.config.get<string>('meilisearch.host');
-    const apiKey = this.config.get<string>('meilisearch.apiKey');
     if (!host) return;
 
-    this.client = new MeiliSearch({ host, apiKey: apiKey ?? undefined });
+    const now = Date.now();
+    if (this.ready || now - this.lastConnectAttempt < RECONNECT_COOLDOWN_MS) return;
+    this.lastConnectAttempt = now;
+
+    const apiKey = this.config.get<string>('meilisearch.apiKey');
+    this.client ??= new MeiliSearch({ host, apiKey: apiKey ?? undefined });
 
     try {
       await this.client.health();
@@ -46,6 +62,7 @@ export class SearchService implements OnModuleInit {
       this.ready = true;
       this.logger.log('Connected and index configured');
     } catch {
+      this.ready = false;
       this.logger.warn('Meilisearch unavailable — falling back to MySQL search');
     }
   }
@@ -54,7 +71,20 @@ export class SearchService implements OnModuleInit {
     return this.ready && this.client !== null;
   }
 
+  /** True when Meilisearch is reachable but the vendor index holds no documents. */
+  async isIndexEmpty(): Promise<boolean> {
+    if (!this.isAvailable) return false;
+    try {
+      const { numberOfDocuments } = await this.client!.index(INDEX).getStats();
+      return numberOfDocuments === 0;
+    } catch (err) {
+      this.logger.error('Failed to read index stats', err);
+      return false;
+    }
+  }
+
   async indexVendor(doc: VendorDocument): Promise<void> {
+    if (!this.isAvailable) await this.connect();
     if (!this.isAvailable) return;
     try {
       await this.client!.index(INDEX).addDocuments([doc]);
@@ -72,8 +102,14 @@ export class SearchService implements OnModuleInit {
     }
   }
 
-  /** Returns matching IDs in relevance order, or null when Meilisearch is unavailable. */
+  /**
+   * Returns matching vendor IDs in relevance order, or `null` when the caller should
+   * fall back to a SQL search — i.e. Meilisearch is unreachable OR its index is empty
+   * (e.g. never reindexed after a deploy/reseed). An empty array means "connected,
+   * index populated, genuinely no matches".
+   */
   async searchIds(q: string): Promise<string[] | null> {
+    if (!this.isAvailable) await this.connect();
     if (!this.isAvailable) return null;
     try {
       const result = await this.client!.index(INDEX).search(q, {
@@ -84,7 +120,16 @@ export class SearchService implements OnModuleInit {
         // while keeping genuine name/category/city matches (score ~0.85+).
         rankingScoreThreshold: 0.65,
       });
-      return result.hits.map((h) => h['id'] as string);
+      const ids = result.hits.map((h) => h['id'] as string);
+
+      // No hits could mean "genuinely nothing matches" or "the index was never
+      // populated" (e.g. reseeded/redeployed without a reindex). Only in the first
+      // case should we short-circuit; otherwise signal a SQL fallback with null.
+      if (ids.length === 0 && (await this.isIndexEmpty())) {
+        this.logger.warn('Vendor index is empty — falling back to MySQL search (run `pnpm reindex`)');
+        return null;
+      }
+      return ids;
     } catch (err) {
       this.logger.error('Search failed', err);
       return null;
