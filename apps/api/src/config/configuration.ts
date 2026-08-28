@@ -9,6 +9,7 @@ export default () => ({
   auth: {
     jwtSecret: process.env['JWT_SECRET'],
     jwtExpiresIn: process.env['JWT_EXPIRES_IN'] ?? '30m',
+    googleClientId: process.env['GOOGLE_CLIENT_ID'] ?? '',
   },
 
   cloudinary: {

@@ -19,6 +19,7 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (data: LoginFormValues) => Promise<void>;
   register: (data: RegisterFormValues) => Promise<void>;
+  loginWithGoogle: (idToken: string, role?: 'CUSTOMER' | 'VENDOR') => Promise<void>;
   logout: () => void;
 }
 
@@ -57,6 +58,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [router],
   );
 
+  const loginWithGoogle = useCallback(
+    async (idToken: string, role?: 'CUSTOMER' | 'VENDOR') => {
+      const { accessToken, user: authUser } = await authApi.google(
+        role ? { idToken, role } : { idToken },
+      );
+      setSession(accessToken);
+      setUser(authUser);
+      router.push(authUser.role === 'VENDOR' ? '/dashboard/vendor' : '/');
+    },
+    [router],
+  );
+
   const logout = useCallback(() => {
     clearSession();
     setUser(null);
@@ -64,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [router]);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -25,6 +25,35 @@ POST /auth/login
   → return JWT (401 on mismatch, do not reveal which field was wrong)
 ```
 
+## 2b. Google Sign-In (SSO)
+
+Uses **Google Identity Services** on the browser + **ID-token verification** on the API.
+No server-side OAuth redirect/callback and no session cookies — the flow stays a plain
+JSON POST and reuses the same JWT contract as email login.
+
+```
+Browser (GIS button) → user picks Google account → Google returns an ID token (JWT)
+  → POST /auth/google  { idToken, role? }
+      → verify idToken signature + audience (GOOGLE_CLIENT_ID) via google-auth-library
+      → reject if email_verified === false
+      → match user by googleId → else by email (link account, store googleId)
+                              → else create User (passwordHash = NULL, role = role ?? CUSTOMER)
+      → return the same { accessToken, user } as /auth/login
+```
+
+- **Account linking:** if a Google email matches an existing email/password account, the
+  Google identity is linked to it (no duplicate user). That account can then sign in
+  either way.
+- **Passwordless accounts:** users created via Google have `passwordHash = NULL`.
+  `/auth/login` rejects them with the generic `401` (no password to compare).
+- **Config:** `GOOGLE_CLIENT_ID` (API) and `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (web) — same
+  OAuth 2.0 *Web application* client ID. If unset, `/auth/google` returns `503` and the
+  web button shows a "not configured" notice; email/password login is unaffected.
+- **Schema:** `User.googleId String? @unique`, `User.avatarUrl String?`,
+  `User.passwordHash` is now nullable (migration `20260828120000_add_google_sso`).
+- **Trust boundary:** the API never trusts the client — it independently verifies the
+  ID token's signature, `aud`, `iss`, and expiry with Google's certs on every call.
+
 ## 3. Password Policy (MVP)
 
 - Minimum 8 characters

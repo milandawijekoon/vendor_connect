@@ -14,7 +14,15 @@ export class UsersService {
     return this.repo.findByEmail(email);
   }
 
+  findByGoogleId(googleId: string) {
+    return this.repo.findByGoogleId(googleId);
+  }
+
   create(data: Prisma.UserCreateInput) {
     return this.repo.create(data);
+  }
+
+  update(id: string, data: Prisma.UserUpdateInput) {
+    return this.repo.update(id, data);
   }
 }

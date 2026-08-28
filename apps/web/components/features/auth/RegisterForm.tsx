@@ -7,6 +7,8 @@ import { registerSchema } from '../../../lib/validation/auth';
 import { ApiClientError } from '../../../lib/api/client';
 import { Icon, type IconName } from '../../ui/icons';
 import { Button, Field, Input } from '../../ui/primitives';
+import { GoogleSignInButton } from './GoogleSignInButton';
+import { AuthDivider } from './AuthDivider';
 
 const ROLE_OPTIONS: { value: 'CUSTOMER' | 'VENDOR'; icon: IconName; label: string; sub: string }[] = [
   { value: 'CUSTOMER', icon: 'user', label: "I'm a customer", sub: 'Planning an event' },
@@ -52,6 +54,7 @@ export function RegisterForm() {
   }
 
   return (
+    <>
     <form onSubmit={(e) => void handleSubmit(e)} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {serverError && (
         <p className="callout callout--danger">
@@ -139,5 +142,9 @@ export function RegisterForm() {
         .
       </p>
     </form>
+
+    <AuthDivider />
+    <GoogleSignInButton role={role} text="signup_with" />
+    </>
   );
 }

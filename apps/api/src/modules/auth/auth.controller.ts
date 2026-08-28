@@ -13,6 +13,7 @@ import type { AuthResponseDto } from '@vendorconnect/shared';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { GoogleLoginDto } from './dto/google-login.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser, type AuthUser } from '../../common/decorators/current-user.decorator';
 import { Public } from '../../common/decorators/public.decorator';
@@ -53,6 +54,21 @@ export class AuthController {
   @ApiUnauthorizedResponse({ ...ERROR_401, description: 'Email or password is incorrect' })
   login(@Body() dto: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(dto);
+  }
+
+  @Public()
+  @Post('google')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Login or sign up with Google',
+    description:
+      'Verifies a Google ID token from Google Identity Services. Links to an existing account by email, or creates a new `CUSTOMER`/`VENDOR` account on first sign-in. Returns the same signed JWT as email login.',
+  })
+  @ApiOkResponse({ description: 'Google sign-in successful.', schema: { example: AUTH_RESPONSE_EXAMPLE } })
+  @ApiBadRequestResponse({ ...ERROR_400, description: 'Missing or malformed idToken' })
+  @ApiUnauthorizedResponse({ ...ERROR_401, description: 'Google credential invalid or email unverified' })
+  googleLogin(@Body() dto: GoogleLoginDto): Promise<AuthResponseDto> {
+    return this.authService.loginWithGoogle(dto);
   }
 
   @UseGuards(JwtAuthGuard)

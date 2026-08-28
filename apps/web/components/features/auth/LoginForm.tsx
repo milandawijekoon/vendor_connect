@@ -6,6 +6,8 @@ import { loginSchema, type LoginFormValues } from '../../../lib/validation/auth'
 import { ApiClientError } from '../../../lib/api/client';
 import { Icon } from '../../ui/icons';
 import { Button, Field, Input } from '../../ui/primitives';
+import { GoogleSignInButton } from './GoogleSignInButton';
+import { AuthDivider } from './AuthDivider';
 
 export function LoginForm() {
   const { login } = useAuth();
@@ -40,6 +42,7 @@ export function LoginForm() {
   }
 
   return (
+    <>
     <form onSubmit={(e) => void handleSubmit(e)} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
       {serverError && (
         <p className="callout callout--danger">
@@ -74,5 +77,9 @@ export function LoginForm() {
         Sign in
       </Button>
     </form>
+
+    <AuthDivider />
+    <GoogleSignInButton text="signin_with" />
+    </>
   );
 }

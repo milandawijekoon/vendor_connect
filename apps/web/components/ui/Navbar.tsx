@@ -96,7 +96,7 @@ export function Navbar() {
                   boxShadow: 'var(--shadow-lg)',
                   padding: 6,
                   display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
+                  gridTemplateColumns: '1fr',
                   gap: 2,
                 }}
               >
