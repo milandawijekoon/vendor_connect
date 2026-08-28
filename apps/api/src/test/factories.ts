@@ -46,6 +46,24 @@ export function makeVendorImage(order = 0) {
   };
 }
 
+export function makeExternalReview(overrides: Partial<ReturnType<typeof baseExternalReview>> = {}) {
+  return { ...baseExternalReview(), ...overrides };
+}
+
+function baseExternalReview() {
+  return {
+    id: id('ext'),
+    vendorId: id('vendor'),
+    source: 'GOOGLE',
+    authorName: 'Rebecca Anthony',
+    authorPhotoUrl: 'https://cdn.example.com/avatar.jpg' as string | null,
+    rating: 5,
+    text: 'Booked after reading the Google reviews — they lived up to every one of them.',
+    relativeTime: '2 weeks ago',
+    createdAt: new Date('2026-07-10T00:00:00.000Z'),
+  };
+}
+
 /** Shaped like VendorsRepository.findByUserId / findBySlug payloads. */
 export function makeVendor(overrides: Partial<ReturnType<typeof baseVendor>> = {}) {
   return { ...baseVendor(), ...overrides };
@@ -65,11 +83,16 @@ function baseVendor() {
     status: VendorStatus.APPROVED as string,
     avgRating: 4.5,
     reviewCount: 12,
+    facebookUrl: 'https://www.facebook.com/ceylonlensstudio' as string | null,
+    googleUrl: 'https://www.google.com/maps/search/?api=1&query=Ceylon%20Lens%20Studio' as string | null,
+    googleRating: 4.8 as number | null,
+    googleReviewCount: 126 as number | null,
     deletedAt: null as Date | null,
     createdAt: new Date('2026-02-01T00:00:00.000Z'),
     updatedAt: new Date('2026-02-15T00:00:00.000Z'),
     categories: [makeVendorCategory('Photography')],
     images: [makeVendorImage(0), makeVendorImage(1)],
+    externalReviews: [makeExternalReview()],
     user: { name: 'Nimal Perera', phone: '+94771234567' as string | null },
   };
 }

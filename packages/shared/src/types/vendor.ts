@@ -15,7 +15,8 @@ export interface VendorOwnerDto {
 
 export interface ExternalReviewDto {
   id: string;
-  source: 'GOOGLE' | string;
+  /** Origin platform, e.g. "GOOGLE". */
+  source: string;
   authorName: string;
   authorPhotoUrl: string | null;
   rating: number;
