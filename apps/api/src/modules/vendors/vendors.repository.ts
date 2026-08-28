@@ -5,6 +5,7 @@ import { PrismaService } from '../../database/prisma.service';
 const VENDOR_INCLUDE = {
   categories: { include: { category: true } },
   images: { orderBy: { order: 'asc' as const } },
+  externalReviews: { orderBy: { createdAt: 'desc' as const } },
   user: { select: { name: true, phone: true } },
 } satisfies Prisma.VendorProfileInclude;
 

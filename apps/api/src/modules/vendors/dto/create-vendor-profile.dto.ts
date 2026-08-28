@@ -5,6 +5,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUrl,
   Max,
   Min,
   MinLength,
@@ -50,4 +51,14 @@ export class CreateVendorProfileDto {
   @IsString({ each: true })
   @ArrayUnique()
   categoryIds?: string[];
+
+  @ApiPropertyOptional({ description: 'Public Facebook page URL' })
+  @IsOptional()
+  @IsUrl()
+  facebookUrl?: string;
+
+  @ApiPropertyOptional({ description: 'Google Business / Maps listing URL' })
+  @IsOptional()
+  @IsUrl()
+  googleUrl?: string;
 }

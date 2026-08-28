@@ -9,8 +9,32 @@ const pick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]!;
 const pickN = <T>(arr: T[], n: number): T[] => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const img = (seed: number | string, w = 800, h = 600) =>
-  `https://picsum.photos/seed/${seed}/${w}/${h}`;
+
+// ── Category-relevant portfolio imagery ────────────────────────────────────
+// loremflickr serves keyword-matched photos; `lock` makes each URL deterministic
+// so re-seeding yields stable images.
+const CATEGORY_IMAGE_TAGS: Record<string, string> = {
+  'photography':             'wedding,photographer',
+  'videography':             'wedding,filmmaker',
+  'venues':                  'wedding,venue',
+  'catering':                'catering,banquet',
+  'decoration':              'wedding,decoration',
+  'makeup-hair':             'bridal,makeup',
+  'music-entertainment':     'wedding,band',
+  'flowers-floral':          'wedding,bouquet',
+  'cakes-desserts':          'wedding,cake',
+  'attire-styling':          'bridal,dress',
+  'sound-lighting':          'stage,lighting',
+  'invitations-stationery':  'wedding,invitation',
+  'transportation':          'wedding,car',
+  'jewellery':               'jewellery,diamond',
+  'event-planning':          'wedding,event',
+};
+
+const img = (category: string, lock: number, w = 800, h = 600) => {
+  const tags = CATEGORY_IMAGE_TAGS[category] ?? 'wedding';
+  return `https://loremflickr.com/${w}/${h}/${tags}?lock=${lock}`;
+};
 
 // ── Categories ─────────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -150,6 +174,40 @@ const REVIEW_COMMENTS = [
   'Best decision we made for our event. Wish we could relive the day just to hire them again.',
 ];
 
+// ── External (Google) review content ───────────────────────────────────────
+const GOOGLE_REVIEW_AUTHORS = [
+  'Nimal Perera',       'Shivani Raj',        'Dinesh Fernando',   'Aisha Mohamed',
+  'Kumar Sivakumar',    'Rebecca Anthony',    'Lasith Gunaratne',  'Menaka Alwis',
+  'Farhan Nizam',       'Chloe Peiris',       'Ranil Abeywardena', 'Yuki Tanaka',
+  'Georgina Muller',    'Pradeep Kariyawasam','Hansika Fonseka',   'David Whitmore',
+];
+
+const GOOGLE_REVIEW_TEXTS = [
+  'Found them on Google and so glad we did. Communication was quick and professional from the first message.',
+  'Booked after reading the Google reviews — they lived up to every one of them. Highly recommend.',
+  'Great value for money. The team was punctual, friendly and delivered exactly what was promised.',
+  'We interviewed three vendors and picked this one. Best decision of our planning process.',
+  'Responsive on WhatsApp, transparent pricing, and no surprises on the day. Five stars.',
+  'A little pricey but absolutely worth it. The quality speaks for itself.',
+  'Professional setup, arrived early, and stayed until everything was wrapped up. Thank you!',
+  'They handled a last-minute venue change without any fuss. Very experienced team.',
+  'Lovely people to work with. Our families are still talking about how good they were.',
+  'Delivered everything ahead of schedule. Would book again for any future event.',
+  'Attention to detail is on another level. Every request was noted and delivered.',
+  'Smooth experience end to end. The Google listing photos are an accurate preview of their work.',
+];
+
+const GOOGLE_RELATIVE_TIMES = [
+  'a week ago', '2 weeks ago', 'a month ago', '2 months ago',
+  '3 months ago', '5 months ago', '7 months ago', 'a year ago',
+];
+
+const fbHandle = (name: string) =>
+  name.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '').slice(0, 40) || 'vendor';
+
+const googleMapsUrl = (name: string, city: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name}, ${city}, Sri Lanka`)}`;
+
 const INQUIRY_MESSAGES = [
   'Hello, we are planning an event for early next year and would love to know your availability and packages.',
   'Hi! I came across your profile and loved your work. Could you share your pricing for a 300-guest function?',
@@ -226,12 +284,32 @@ async function main() {
 
     const vendorSlug = slug(v.name) + (i > 0 ? `-${i}` : '');
 
+    // Social / external presence
+    const facebookUrl       = `https://www.facebook.com/${fbHandle(v.name)}`;
+    const googleUrl         = googleMapsUrl(v.name, v.city);
+    const googleReviewCount = rand(24, 320);
+    const googleRating      = Math.min(5, Math.max(3.7, Math.round((4.3 + (Math.random() - 0.4)) * 10) / 10));
+
     // Check existing
     const existing = await prisma.vendorProfile.findFirst({ where: { userId: user.id } });
     let profileId: string;
 
     if (existing) {
       profileId = existing.id;
+      await prisma.vendorProfile.update({
+        where: { id: profileId },
+        data: {
+          businessName: v.name,
+          description:  v.desc,
+          city:         v.city,
+          priceMin:     v.priceMin,
+          priceMax:     v.priceMax,
+          facebookUrl,
+          googleUrl,
+          googleRating,
+          googleReviewCount,
+        },
+      });
     } else {
       const profile = await prisma.vendorProfile.create({
         data: {
@@ -244,31 +322,52 @@ async function main() {
           priceMin:     v.priceMin,
           priceMax:     v.priceMax,
           status:       VendorStatus.APPROVED,
+          facebookUrl,
+          googleUrl,
+          googleRating,
+          googleReviewCount,
           categories: {
             create: [{ categoryId: catId }],
           },
         },
       });
       profileId = profile.id;
+    }
 
-      // Portfolio images (3–5 per vendor)
-      const imageCount = rand(3, 5);
-      for (let j = 0; j < imageCount; j++) {
-        const seed = `${v.category}-${i}-${j}`;
-        await prisma.portfolioImage.create({
-          data: {
-            vendorId:          profileId,
-            cloudinaryPublicId: `vendorconnect/seed/${seed}`,
-            url:               img(seed),
-            order:             j,
-          },
-        });
-      }
+    // Portfolio images (4 category-relevant photos per vendor) — refreshed each run
+    await prisma.portfolioImage.deleteMany({ where: { vendorId: profileId } });
+    for (let j = 0; j < 4; j++) {
+      const lock = i * 10 + j;
+      await prisma.portfolioImage.create({
+        data: {
+          vendorId:          profileId,
+          cloudinaryPublicId: `vendorconnect/seed/${v.category}-${i}-${j}`,
+          url:               img(v.category, lock),
+          order:             j,
+        },
+      });
+    }
+
+    // External (Google) reviews (3–5 per vendor) — refreshed each run
+    await prisma.externalReview.deleteMany({ where: { vendorId: profileId } });
+    const gReviewers = pickN(GOOGLE_REVIEW_AUTHORS, rand(3, 5));
+    for (let g = 0; g < gReviewers.length; g++) {
+      await prisma.externalReview.create({
+        data: {
+          vendorId:     profileId,
+          source:       'GOOGLE',
+          authorName:   gReviewers[g]!,
+          authorPhotoUrl: `https://i.pravatar.cc/80?u=${encodeURIComponent(gReviewers[g]! + i)}`,
+          rating:       pick([4, 4, 5, 5, 5]),
+          text:         pick(GOOGLE_REVIEW_TEXTS),
+          relativeTime: pick(GOOGLE_RELATIVE_TIMES),
+        },
+      });
     }
 
     vendorProfiles.push({ id: profileId, slug: vendorSlug, name: v.name });
   }
-  console.log(`   ✓ ${vendorProfiles.length} vendor profiles with portfolio images\n`);
+  console.log(`   ✓ ${vendorProfiles.length} vendor profiles with portfolio images, social links & Google reviews\n`);
 
   // ── 5. Customer users ────────────────────────────────────────────────────
   console.log('🙋 Seeding customer users...');
@@ -293,6 +392,7 @@ async function main() {
 
   // ── 6. Reviews ─────────────────────────────────────────────────────────
   console.log('⭐ Seeding reviews...');
+  await prisma.review.deleteMany({});
   let reviewCount = 0;
   const reviewedPairs = new Set<string>();
 
@@ -340,6 +440,7 @@ async function main() {
 
   // ── 7. Inquiries ───────────────────────────────────────────────────────
   console.log('💬 Seeding inquiries...');
+  await prisma.inquiry.deleteMany({});
   let inquiryCount = 0;
   const STATUSES = [
     InquiryStatus.NEW, InquiryStatus.NEW, InquiryStatus.NEW,

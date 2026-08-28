@@ -13,6 +13,16 @@ export interface VendorOwnerDto {
   phone: string | null;
 }
 
+export interface ExternalReviewDto {
+  id: string;
+  source: 'GOOGLE' | string;
+  authorName: string;
+  authorPhotoUrl: string | null;
+  rating: number;
+  text: string;
+  relativeTime: string;
+}
+
 export interface VendorProfileDto {
   id: string;
   slug: string;
@@ -25,8 +35,13 @@ export interface VendorProfileDto {
   status: VendorStatus;
   avgRating: number;
   reviewCount: number;
+  facebookUrl: string | null;
+  googleUrl: string | null;
+  googleRating: number | null;
+  googleReviewCount: number | null;
   categories: CategoryDto[];
   images: PortfolioImageDto[];
+  googleReviews: ExternalReviewDto[];
   owner: VendorOwnerDto;
   createdAt: string;
   updatedAt: string;

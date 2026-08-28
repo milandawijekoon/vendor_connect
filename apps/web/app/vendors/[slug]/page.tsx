@@ -5,12 +5,19 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { PaginatedResponse, ReviewDto, VendorProfileDto } from '@vendorconnect/shared';
 import { InquiryForm } from '../../../components/features/inquiries/InquiryForm';
+import { VendorOnlinePresence } from '../../../components/features/vendors/VendorOnlinePresence';
 import { ReviewList } from '../../../components/features/reviews/ReviewList';
 import { ReviewForm } from '../../../components/features/reviews/ReviewForm';
 import { Icon, categoryIcon, type IconName } from '../../../components/ui/icons';
-import { Badge, LoadingBlock, Stars } from '../../../components/ui/primitives';
+import { Badge, LoadingBlock, Pagination, Stars } from '../../../components/ui/primitives';
 
 const API_BASE = process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:4000/api/v1';
+
+const REVIEWS_PER_PAGE = 5;
+
+const EMPTY_REVIEWS: PaginatedResponse<ReviewDto> = {
+  data: [], total: 0, page: 1, limit: REVIEWS_PER_PAGE, totalPages: 0,
+};
 
 async function getVendor(slug: string): Promise<VendorProfileDto | null> {
   try {
@@ -20,27 +27,56 @@ async function getVendor(slug: string): Promise<VendorProfileDto | null> {
   } catch { return null; }
 }
 
-async function getReviews(slug: string): Promise<ReviewDto[]> {
+async function getReviews(slug: string, page: number): Promise<PaginatedResponse<ReviewDto>> {
   try {
-    const res = await fetch(`${API_BASE}/vendors/${slug}/reviews?limit=50`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    const data = (await res.json()) as PaginatedResponse<ReviewDto>;
-    return data.data;
-  } catch { return []; }
+    const res = await fetch(
+      `${API_BASE}/vendors/${slug}/reviews?page=${page}&limit=${REVIEWS_PER_PAGE}`,
+      { cache: 'no-store' },
+    );
+    if (!res.ok) return EMPTY_REVIEWS;
+    return (await res.json()) as PaginatedResponse<ReviewDto>;
+  } catch { return EMPTY_REVIEWS; }
 }
 
 export default function VendorProfilePage({ params }: { params: { slug: string } }) {
   const [vendor, setVendor] = useState<VendorProfileDto | null | undefined>(undefined);
-  const [reviews, setReviews] = useState<ReviewDto[]>([]);
+  const [reviews, setReviews] = useState<PaginatedResponse<ReviewDto>>(EMPTY_REVIEWS);
+  const [reviewPage, setReviewPage] = useState(1);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
+    setReviewPage(1);
     void (async () => {
-      const [v, r] = await Promise.all([getVendor(params.slug), getReviews(params.slug)]);
+      const [v, r] = await Promise.all([getVendor(params.slug), getReviews(params.slug, 1)]);
       setVendor(v);
       setReviews(r);
     })();
   }, [params.slug]);
+
+  useEffect(() => {
+    if (vendor == null || reviewPage === reviews.page) return;
+    let cancelled = false;
+    setReviewsLoading(true);
+    void (async () => {
+      const r = await getReviews(params.slug, reviewPage);
+      if (cancelled) return;
+      setReviews(r);
+      setReviewsLoading(false);
+      if (typeof document !== 'undefined') {
+        document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [reviewPage, params.slug, vendor, reviews.page]);
+
+  const refreshReviews = () => {
+    if (reviewPage === 1) {
+      void getReviews(params.slug, 1).then(setReviews);
+    } else {
+      setReviewPage(1);
+    }
+  };
 
   if (vendor === undefined) {
     return (
@@ -194,11 +230,16 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
 
             <div className="divider" />
 
+            {/* Facebook / Google presence + Google reviews */}
+            <VendorOnlinePresence vendor={vendor} />
+
+            <div className="divider" />
+
             {/* Reviews */}
-            <section>
+            <section id="reviews" style={{ scrollMarginTop: 'calc(var(--nav-h) + 16px)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)' }}>
-                  Reviews {vendor.reviewCount > 0 ? `(${vendor.reviewCount})` : ''}
+                  Reviews {reviews.total > 0 ? `(${reviews.total})` : ''}
                 </h2>
                 {vendor.reviewCount > 0 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -208,10 +249,26 @@ export default function VendorProfilePage({ params }: { params: { slug: string }
                 )}
               </div>
 
-              <ReviewList reviews={reviews} />
+              <div style={{ opacity: reviewsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
+                <ReviewList reviews={reviews.data} />
+              </div>
+
+              {reviews.total > REVIEWS_PER_PAGE && (
+                <>
+                  <Pagination
+                    page={reviews.page}
+                    totalPages={reviews.totalPages}
+                    onPage={(p) => setReviewPage(p)}
+                  />
+                  <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--text-muted)', marginTop: 10 }}>
+                    Showing {(reviews.page - 1) * REVIEWS_PER_PAGE + 1}–
+                    {Math.min(reviews.page * REVIEWS_PER_PAGE, reviews.total)} of {reviews.total}
+                  </p>
+                </>
+              )}
 
               <div style={{ marginTop: 24 }}>
-                <ReviewForm vendorSlug={params.slug} onReviewSubmitted={(r) => setReviews((prev) => [r, ...prev])} />
+                <ReviewForm vendorSlug={params.slug} onReviewSubmitted={refreshReviews} />
               </div>
             </section>
           </div>

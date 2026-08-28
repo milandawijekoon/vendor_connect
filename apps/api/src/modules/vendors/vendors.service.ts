@@ -68,6 +68,10 @@ function toDto(vendor: NonNullable<Awaited<ReturnType<VendorsRepository['findByS
     status: vendor.status as VendorStatus,
     avgRating: vendor.avgRating,
     reviewCount: vendor.reviewCount,
+    facebookUrl: vendor.facebookUrl,
+    googleUrl: vendor.googleUrl,
+    googleRating: vendor.googleRating,
+    googleReviewCount: vendor.googleReviewCount,
     categories: vendor.categories.map((vc) => ({
       id: vc.category.id,
       name: vc.category.name,
@@ -78,6 +82,15 @@ function toDto(vendor: NonNullable<Awaited<ReturnType<VendorsRepository['findByS
       url: img.url,
       cloudinaryPublicId: img.cloudinaryPublicId,
       order: img.order,
+    })),
+    googleReviews: vendor.externalReviews.map((r) => ({
+      id: r.id,
+      source: r.source,
+      authorName: r.authorName,
+      authorPhotoUrl: r.authorPhotoUrl,
+      rating: r.rating,
+      text: r.text,
+      relativeTime: r.relativeTime,
     })),
     owner: { name: vendor.user.name, phone: vendor.user.phone },
     createdAt: vendor.createdAt.toISOString(),
@@ -110,6 +123,8 @@ export class VendorsService {
       address: dto.address ?? null,
       priceMin: dto.priceMin ?? null,
       priceMax: dto.priceMax ?? null,
+      facebookUrl: dto.facebookUrl ?? null,
+      googleUrl: dto.googleUrl ?? null,
       user: { connect: { id: userId } },
     });
 
@@ -150,6 +165,8 @@ export class VendorsService {
     if (dto.address !== undefined) updateData['address'] = dto.address;
     if (dto.priceMin !== undefined) updateData['priceMin'] = dto.priceMin;
     if (dto.priceMax !== undefined) updateData['priceMax'] = dto.priceMax;
+    if (dto.facebookUrl !== undefined) updateData['facebookUrl'] = dto.facebookUrl;
+    if (dto.googleUrl !== undefined) updateData['googleUrl'] = dto.googleUrl;
 
     if (dto.categoryIds !== undefined) {
       await this.repo.syncCategories(vendor.id, dto.categoryIds);

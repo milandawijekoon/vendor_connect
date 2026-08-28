@@ -62,14 +62,22 @@ model VendorProfile {
   status       VendorStatus @default(PENDING)
   avgRating    Float        @default(0)
   reviewCount  Int          @default(0)
+
+  // Social / external presence
+  facebookUrl       String? @db.Text
+  googleUrl         String? @db.Text
+  googleRating      Float?
+  googleReviewCount Int?
+
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
 
-  categories VendorCategory[]
-  images     PortfolioImage[]
-  reviews    Review[]
-  inquiries  Inquiry[]
+  categories      VendorCategory[]
+  images          PortfolioImage[]
+  reviews         Review[]
+  externalReviews ExternalReview[]
+  inquiries       Inquiry[]
 
   @@index([city])
   @@index([status])
@@ -116,6 +124,23 @@ model Review {
   createdAt DateTime      @default(now())
 
   @@unique([vendorId, userId])
+  @@index([vendorId])
+}
+
+/// Reviews imported from an external platform (currently Google Business Profile).
+/// Read-only snapshots shown alongside on-platform reviews.
+model ExternalReview {
+  id             String        @id @default(cuid())
+  vendorId       String
+  vendor         VendorProfile @relation(fields: [vendorId], references: [id])
+  source         String        @default("GOOGLE")
+  authorName     String
+  authorPhotoUrl String?       @db.Text
+  rating         Int
+  text           String        @db.Text
+  relativeTime   String
+  createdAt      DateTime      @default(now())
+
   @@index([vendorId])
 }
 
