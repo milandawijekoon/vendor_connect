@@ -1,6 +1,7 @@
 export default () => ({
   nodeEnv: process.env['NODE_ENV'] ?? 'development',
-  port: parseInt(process.env['API_PORT'] ?? '4000', 10),
+  // Railway (and most PaaS) inject PORT; fall back to API_PORT for local/compose.
+  port: parseInt(process.env['PORT'] ?? process.env['API_PORT'] ?? '4000', 10),
 
   database: {
     url: process.env['DATABASE_URL'],
