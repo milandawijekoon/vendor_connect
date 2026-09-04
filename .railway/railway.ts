@@ -1,74 +1,96 @@
 /**
- * Railway Infrastructure as Code — the whole project in one file.
+ * Railway Infrastructure as Code — the whole vendor-connect project in one file.
  * Docs: https://docs.railway.com/infrastructure-as-code
  *
- * Config as Code (railway.json) is deprecated for existing services from
- * 2026-12-01; this file is the replacement. The railway.json files are kept
- * for now as a fallback and can be deleted once `railway apply` succeeds.
+ * This is the single source of truth for the Railway project. There are no
+ * railway.json / railway.toml files; do not re-add them.
  *
- * Apply with the Railway CLI (v4+):
- *   npx --yes @railway/cli login
- *   npx --yes @railway/cli link          # select this project + environment
- *   npx --yes @railway/cli config pull   # import the CURRENT live services so
- *                                        # this file matches, then reconcile
- *   npx --yes @railway/cli plan          # preview the diff
- *   npx --yes @railway/cli apply         # apply after confirmation
+ * Greenfield apply (run once per environment):
+ *   railway login
+ *   railway init                 # create the "vendor-connect" project (first time only)
+ *   railway environment          # select the target environment (production, then staging)
+ *   railway config plan          # preview the diff
+ *   railway config apply         # create/update every resource in the linked environment
  *
- * NOTE: the exact option name for a non-root Dockerfile in service() is not in
- * the public docs yet. Run `config pull` first and copy whatever key Railway
- * emits for the existing `vendor-connect` service (it currently builds
- * apps/api/Dockerfile via railway.json). Adjust the `build`/`dockerfile`
- * fields below to match before applying.
+ * Secrets wrapped in preserve() are set once in the Railway dashboard (per
+ * environment) and kept untouched across applies — see docs/railway-deploy.md.
  */
-import { defineRailway, github, image, mysql, project, service, volume, preserve } from "railway/iac";
+import {
+  defineRailway,
+  github,
+  group,
+  image,
+  mysql,
+  preserve,
+  project,
+  service,
+  volume,
+} from "railway/iac";
+
+const REPO = "milandawijekoon/vendor_connect";
 
 export default defineRailway((ctx) => {
-  const REPO = "milandawijekoon/vendor_connect";
+  // production builds from main; every other environment (staging) builds from develop.
+  const branch = ctx.environment === "production" ? "main" : "develop";
 
-  // ── Database ──────────────────────────────────────────────────────────────
+  // ── Data ──────────────────────────────────────────────────────────────────
   const db = mysql("MySQL");
 
-  // ── Search ───────────────────────────────────────────────────────────────
   const meiliData = volume("meili-data", { sizeMB: 1024 });
 
   const meilisearch = service("meilisearch", {
     source: image("getmeili/meilisearch:v1.9"),
     volumeMounts: { "/meili_data": meiliData },
+    // Private-only: no public domain. api reaches it over the private network.
     env: {
       MEILI_ENV: "production",
       MEILI_NO_ANALYTICS: "true",
-      MEILI_MASTER_KEY: preserve(), // set once in the dashboard, kept across applies
+      MEILI_MASTER_KEY: preserve(), // must equal api's MEILISEARCH_API_KEY
     },
   });
 
-  // ── API (NestJS) ─────────────────────────────────────────────────────────
-  // Build context must stay at the repo root (Dockerfile copies pnpm-workspace
-  // + packages/*), so do NOT set rootDirectory. dockerfilePath -> apps/api/Dockerfile.
-  const api = service("vendor-connect", {
-    source: github(REPO, { branch: "main" }),
-    // TODO: confirm the Dockerfile-path key from `railway config pull`.
-    build: { dockerfilePath: "apps/api/Dockerfile" } as never,
-    preDeploy: "pnpm exec prisma migrate deploy",
+  // ── API — NestJS 10 + Prisma 5 (MySQL) ───────────────────────────────────
+  // The Docker build context is the repo root (the Dockerfile copies
+  // pnpm-workspace.yaml + packages/*), so no root directory is set. The
+  // Dockerfile's own `production` stage is the final image.
+  const api = service("api", {
+    source: github(REPO, { branch }),
+    build: {
+      dockerfilePath: "apps/api/Dockerfile",
+      watchPatterns: [
+        "apps/api/**",
+        "packages/**",
+        "pnpm-lock.yaml",
+        "pnpm-workspace.yaml",
+      ],
+    },
+    preDeploy: "pnpm exec prisma migrate deploy", // image WORKDIR is /app/apps/api
     healthcheck: "/api/v1/health",
     healthcheckTimeout: 120,
+    restartPolicyType: "ON_FAILURE",
+    restartPolicyMaxRetries: 3,
     env: {
       NODE_ENV: "production",
-      API_PORT: "${{ PORT }}",
+      // Railway injects PORT; configuration.ts already reads it.
       DATABASE_URL: db.env.MYSQL_URL,
-      JWT_SECRET: preserve(),
-      JWT_EXPIRES_IN: "30m",
-      FRONTEND_URL: `https://${"${{ web.RAILWAY_PUBLIC_DOMAIN }}"}`,
       MEILISEARCH_HOST: `http://${meilisearch.env.RAILWAY_PRIVATE_DOMAIN}:7700`,
       MEILISEARCH_API_KEY: preserve(),
+      // Railway reference-variable string, resolved at deploy time. Used here
+      // (rather than a typed ref) to break the api <-> web dependency cycle:
+      // `web` is declared after this block.
+      FRONTEND_URL: "https://${{ web.RAILWAY_PUBLIC_DOMAIN }}",
+      JWT_SECRET: preserve(),
+      JWT_EXPIRES_IN: "30m",
+      GOOGLE_CLIENT_ID: preserve(),
       CLOUDINARY_CLOUD_NAME: preserve(),
       CLOUDINARY_API_KEY: preserve(),
       CLOUDINARY_API_SECRET: preserve(),
-      GOOGLE_CLIENT_ID: preserve(),
       SMTP_HOST: preserve(),
       SMTP_PORT: "587",
       SMTP_USER: preserve(),
       SMTP_PASS: preserve(),
       SMTP_FROM: "noreply@vendorconnect.lk",
+      // Gold-price cron runs in-process (@nestjs/schedule); no worker service.
       GOLD_PRICE_CRON: "15 16 * * 1-5",
       GOLD_PRICE_TZ: "Europe/London",
       GOLD_PRICE_RETAIL_PREMIUM_PCT: "0",
@@ -76,21 +98,32 @@ export default defineRailway((ctx) => {
     },
   });
 
-  // ── Web (Next.js standalone) ─────────────────────────────────────────────
+  // ── Web — Next.js 14 (standalone output) ─────────────────────────────────
   const web = service("web", {
-    source: github(REPO, { branch: "main" }),
-    // TODO: confirm the Dockerfile-path key from `railway config pull`.
-    build: { dockerfilePath: "apps/web/Dockerfile" } as never,
+    source: github(REPO, { branch }),
+    build: {
+      dockerfilePath: "apps/web/Dockerfile",
+      watchPatterns: [
+        "apps/web/**",
+        "packages/shared/**",
+        "pnpm-lock.yaml",
+        "pnpm-workspace.yaml",
+      ],
+    },
     healthcheck: "/",
     healthcheckTimeout: 120,
+    restartPolicyType: "ON_FAILURE",
+    restartPolicyMaxRetries: 3,
     env: {
       NODE_ENV: "production",
-      // NEXT_PUBLIC_* is inlined at build time (forwarded as a Docker build arg).
+      // NEXT_PUBLIC_* is inlined at BUILD time. Railway forwards service
+      // variables as Docker build args, and apps/web/Dockerfile declares
+      // `ARG NEXT_PUBLIC_API_URL`, so changing this requires a rebuild.
       NEXT_PUBLIC_API_URL: `https://${api.env.RAILWAY_PUBLIC_DOMAIN}/api/v1`,
     },
   });
 
   return project("vendor-connect", {
-    resources: [db, meiliData, meilisearch, api, web],
+    resources: [group("vendor-connect", [db, meiliData, meilisearch, api, web])],
   });
 });
