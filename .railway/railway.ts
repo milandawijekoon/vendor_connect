@@ -34,7 +34,9 @@ export default defineRailway((ctx) => {
   // ── Data ──────────────────────────────────────────────────────────────────
   const db = mysql("MySQL");
 
-  const meiliData = volume("meili-data", { sizeMB: 1024 });
+  // 500 MB is the free/trial plan ceiling; the Meilisearch index for this app
+  // is well under that. Raise this after upgrading the Railway plan if needed.
+  const meiliData = volume("meili-data", { sizeMB: 500 });
 
   const meilisearch = service("meilisearch", {
     source: image("getmeili/meilisearch:v1.9"),
@@ -122,6 +124,11 @@ export default defineRailway((ctx) => {
     },
     env: {
       NODE_ENV: "production",
+      // Pin the listen port. Railway otherwise injects its own PORT (8080),
+      // which diverges from the generated domain's target port (3000, detected
+      // from the Dockerfile's EXPOSE) and yields a 502. The Next.js standalone
+      // server reads PORT; keep this equal to the web service domain's port.
+      PORT: "3000",
       // NEXT_PUBLIC_* is inlined at BUILD time. Railway forwards service
       // variables as Docker build args, and apps/web/Dockerfile declares
       // `ARG NEXT_PUBLIC_API_URL`, so changing this requires a rebuild.
