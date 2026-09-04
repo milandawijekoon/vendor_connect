@@ -13,7 +13,7 @@ COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY packages/shared/package.json ./packages/shared/package.json
 COPY packages/gold-price/package.json ./packages/gold-price/package.json
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm --filter @vendorconnect/shared run build
 RUN pnpm --filter @vendorconnect/gold-price run build
@@ -28,7 +28,7 @@ COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY packages/shared/package.json ./packages/shared/package.json
 COPY packages/gold-price/package.json ./packages/gold-price/package.json
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --prod=false
+RUN pnpm install --frozen-lockfile --prod=false
 COPY . .
 RUN pnpm --filter @vendorconnect/shared run build
 RUN pnpm --filter @vendorconnect/gold-price run build
