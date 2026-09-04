@@ -32,7 +32,10 @@ export default defineRailway((ctx) => {
   const branch = ctx.environment === "production" ? "main" : "develop";
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const db = mysql("MySQL");
+  // Railway managed databases need a project-unique name — they aren't shared
+  // across environments the way plain services are, so each environment gets
+  // its own MySQL instance under its own name.
+  const db = mysql(ctx.environment === "production" ? "MySQL" : `MySQL-${ctx.environment}`);
 
   // 500 MB is the free/trial plan ceiling; the Meilisearch index for this app
   // is well under that. Raise this after upgrading the Railway plan if needed.
@@ -133,6 +136,12 @@ export default defineRailway((ctx) => {
       // variables as Docker build args, and apps/web/Dockerfile declares
       // `ARG NEXT_PUBLIC_API_URL`, so changing this requires a rebuild.
       NEXT_PUBLIC_API_URL: "https://${{ api.RAILWAY_PUBLIC_DOMAIN }}/api/v1",
+      // Google OAuth client ID — public by design (client IDs aren't secret),
+      // but set once in the dashboard per environment so it's not hardcoded
+      // here. Must equal api's GOOGLE_CLIENT_ID, and the deployed domain must
+      // be an Authorized JavaScript origin on that OAuth client in Google
+      // Cloud Console. Changing it requires a rebuild (build-time ARG).
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: preserve(),
     },
   });
 
