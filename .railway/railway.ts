@@ -1,5 +1,5 @@
 /**
- * Railway Infrastructure as Code — the whole vendor-connect project in one file.
+ * Railway Infrastructure as Code — the whole vendor_connect project in one file.
  * Docs: https://docs.railway.com/infrastructure-as-code
  *
  * This is the single source of truth for the Railway project. There are no
@@ -7,7 +7,7 @@
  *
  * Greenfield apply (run once per environment):
  *   railway login
- *   railway init                 # create the "vendor-connect" project (first time only)
+ *   railway init                 # create the "vendor_connect" project (first time only)
  *   railway environment          # select the target environment (production, then staging)
  *   railway config plan          # preview the diff
  *   railway config apply         # create/update every resource in the linked environment
@@ -18,7 +18,6 @@
 import {
   defineRailway,
   github,
-  group,
   image,
   mysql,
   preserve,
@@ -123,7 +122,7 @@ export default defineRailway((ctx) => {
     },
   });
 
-  return project("vendor-connect", {
-    resources: [group("vendor-connect", [db, meiliData, meilisearch, api, web])],
+  return project("vendor_connect", {
+    resources: [db, meiliData, meilisearch, api, web],
   });
 });
