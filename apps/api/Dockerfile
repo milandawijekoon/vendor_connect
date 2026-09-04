@@ -3,7 +3,7 @@ FROM node:20-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN apk add --no-cache openssl
-RUN corepack enable && corepack prepare pnpm@9 --activate
+RUN npm install -g pnpm@9
 WORKDIR /app
 
 # ── Development ────────────────────────────────────────────────────────────────
