@@ -1,5 +1,14 @@
 # Deploying to Railway
 
+> **Config format:** `railway.json` (Config as Code) is deprecated by Railway and
+> loses support for existing services on **2026-12-01**. The replacement is
+> Infrastructure as Code — a single [`.railway/railway.ts`](../.railway/railway.ts)
+> describing every service — applied with `railway plan` / `railway apply`.
+> The `railway.json` files still work today and remain the fallback until the
+> IaC file has been reconciled against the live project (`railway config pull`)
+> and applied. See "Migrating to Infrastructure as Code" at the end.
+
+
 This monorepo deploys as **three Railway services** inside one project:
 
 | Service | Source | Build | Notes |
@@ -112,3 +121,24 @@ Both configured in the respective `railway.json`.
 
 Push to `main`. Railway rebuilds any service whose watched paths changed. To force a
 rebuild: service → Deployments → **Redeploy**.
+
+---
+
+## 7. Migrating to Infrastructure as Code
+
+Config as Code (`railway.json`) support for existing services ends **2026-12-01**.
+[`.railway/railway.ts`](../.railway/railway.ts) is the project-level replacement.
+
+```bash
+npx --yes @railway/cli login
+npx --yes @railway/cli link           # pick this project + the target environment
+npx --yes @railway/cli config pull    # import the live services into .railway/railway.ts
+npx --yes @railway/cli plan           # review the diff
+npx --yes @railway/cli apply          # apply after confirmation
+```
+
+`config pull` is the source of truth for option names — in particular the key used
+for a non-root Dockerfile path. Reconcile the scaffold in `.railway/railway.ts`
+with what it emits, re-run `plan`, then `apply`. Once `apply` succeeds and a
+deploy is green, delete `railway.json`, `apps/api/railway.json`, and
+`apps/web/railway.json`.
