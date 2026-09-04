@@ -8,7 +8,7 @@ are no `railway.json` / `railway.toml` files, and none should be added back
 
 ## Architecture
 
-One Railway **project** `vendor-connect` with two environments:
+One Railway **project** `vendor_connect` with two environments:
 
 | Environment | Git branch |
 |---|---|
@@ -38,7 +38,7 @@ Each environment contains the same four resources:
 
 ```bash
 railway login
-railway init                 # create the "vendor-connect" project (once)
+railway init                 # create the "vendor_connect" project (once)
 ```
 
 Then, for each environment (`production` first, then `staging`):
