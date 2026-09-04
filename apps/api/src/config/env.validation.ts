@@ -23,4 +23,9 @@ export const validationSchema = Joi.object({
   SMTP_USER: Joi.string().optional().allow(''),
   SMTP_PASS: Joi.string().optional().allow(''),
   SMTP_FROM: Joi.string().default('noreply@vendorconnect.lk'),
+
+  GOLD_PRICE_CRON: Joi.string().default('15 16 * * 1-5'),
+  GOLD_PRICE_TZ: Joi.string().default('Europe/London'),
+  GOLD_PRICE_RETAIL_PREMIUM_PCT: Joi.number().min(0).max(1).default(0),
+  GOLD_PRICE_REFRESH_ON_BOOT: Joi.boolean().truthy('true').falsy('false').default(true),
 });

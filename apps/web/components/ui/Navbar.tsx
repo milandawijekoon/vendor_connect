@@ -9,6 +9,7 @@ import { Role } from '@vendorconnect/shared';
 import { Logo } from './Logo';
 import { Icon } from './icons';
 import { Button, ButtonLink } from './primitives';
+import { GoldPriceBadge } from './GoldPriceBadge';
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -124,6 +125,8 @@ export function Navbar() {
 
         {/* Auth area (desktop) */}
         <div className="nav-desktop" style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+          <GoldPriceBadge />
+          <span style={{ width: 1, alignSelf: 'stretch', background: 'var(--border)', margin: '8px 2px' }} />
           {user ? (
             <>
               <ButtonLink href={dashboardHref} variant="ghost" size="sm" iconLeft={isStaff ? 'layout-dashboard' : 'search'}>
@@ -179,6 +182,9 @@ export function Navbar() {
             gap: 4,
           }}
         >
+          <div style={{ padding: '4px 0 8px' }}>
+            <GoldPriceBadge variant="row" />
+          </div>
           <Link href="/vendors" className="nav-link" style={{ padding: '10px 8px' }}>
             Find Vendors
           </Link>

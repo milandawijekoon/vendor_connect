@@ -10,6 +10,10 @@ export interface PrismaMock {
   user: Jestify<Pick<PrismaService['user'], 'count'>>;
   inquiry: Jestify<Pick<PrismaService['inquiry'], 'count'>>;
   review: Jestify<Pick<PrismaService['review'], 'count'>>;
+  goldPriceSnapshot: Jestify<Pick<
+    PrismaService['goldPriceSnapshot'],
+    'findFirst' | 'findMany' | 'upsert'
+  >>;
 }
 
 /**
@@ -29,6 +33,11 @@ export function createPrismaMock(): PrismaMock {
     user: { count: jest.fn() },
     inquiry: { count: jest.fn() },
     review: { count: jest.fn() },
+    goldPriceSnapshot: {
+      findFirst: jest.fn(),
+      findMany: jest.fn(),
+      upsert: jest.fn(),
+    },
   };
 }
 

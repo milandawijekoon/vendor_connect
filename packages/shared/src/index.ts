@@ -7,3 +7,4 @@ export * from './types/vendor';
 export * from './types/inquiry';
 export * from './types/review';
 export * from './types/admin';
+export * from './types/gold';

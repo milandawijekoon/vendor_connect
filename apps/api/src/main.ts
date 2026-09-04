@@ -76,6 +76,7 @@ All errors return:
       .addTag('vendors', 'Vendor profile management, portfolio images, and public profiles')
       .addTag('inquiries', 'Send inquiries to vendors; vendor lead inbox')
       .addTag('reviews', 'Submit and read vendor reviews')
+      .addTag('gold-price', 'Daily gold price (world USD + Sri Lanka LKR), refreshed by a scheduled job')
       .build();
 
     const document = SwaggerModule.createDocument(app, swaggerConfig);

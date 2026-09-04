@@ -3,7 +3,8 @@
   "compilerOptions": {
     "rootDir": "./src",
     "paths": {
-      "@vendorconnect/shared": ["../../packages/shared/dist"]
+      "@vendorconnect/shared": ["../../packages/shared/dist"],
+      "@vendorconnect/gold-price": ["../../packages/gold-price/dist"]
     }
   },
   "include": ["src"],

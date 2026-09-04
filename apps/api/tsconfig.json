@@ -10,9 +10,10 @@
     "noUncheckedIndexedAccess": false,
     "exactOptionalPropertyTypes": false,
     "paths": {
-      "@vendorconnect/shared": ["../../packages/shared/src"]
+      "@vendorconnect/shared": ["../../packages/shared/src"],
+      "@vendorconnect/gold-price": ["../../packages/gold-price/src"]
     }
   },
-  "include": ["src", "../../packages/shared/src"],
+  "include": ["src", "../../packages/shared/src", "../../packages/gold-price/src"],
   "exclude": ["dist", "node_modules"]
 }

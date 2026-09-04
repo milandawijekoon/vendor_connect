@@ -161,3 +161,32 @@ model Inquiry {
   @@index([vendorId])
   @@index([status])
 }
+
+/// Daily gold price snapshot. One row per LBMA auction date.
+/// World figures are USD; `lkr*` figures apply the daily USD->LKR rate.
+/// `*PerGram*` values already include `retailPremiumPct` (0 = pure metal value).
+model GoldPriceSnapshot {
+  id          String @id @default(cuid())
+  /// LBMA auction date, ISO `YYYY-MM-DD` (London date). One snapshot per day.
+  auctionDate String @unique
+  auction     String @default("pm")
+  source      String @default("LBMA")
+
+  usdPerOz         Float
+  usdToLkr         Float
+  retailPremiumPct Float @default(0)
+
+  worldPerGram24k Float
+  worldPerGram22k Float
+  worldPerGram18k Float
+
+  lkrPerGram24k     Float
+  lkrPerGram22k     Float
+  lkrPerGram18k     Float
+  lkrPerSovereign22k Float
+
+  /// When the upstream data was produced (from the pricing package).
+  fetchedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

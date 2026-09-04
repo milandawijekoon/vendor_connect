@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
 import configuration from './config/configuration';
 import { validationSchema } from './config/env.validation';
 import { PrismaModule } from './database/prisma.module';
@@ -17,6 +18,7 @@ import { InquiriesModule } from './modules/inquiries/inquiries.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { MetaModule } from './modules/meta/meta.module';
+import { GoldPriceModule } from './modules/gold-price/gold-price.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 
@@ -30,6 +32,7 @@ import { RolesGuard } from './common/guards/roles.guard';
       validationOptions: { abortEarly: false },
     }),
     ThrottlerModule.forRoot([{ name: 'global', ttl: 60_000, limit: 100 }]),
+    ScheduleModule.forRoot(),
     PrismaModule,
     CloudinaryModule,
     SearchModule,
@@ -42,6 +45,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     ReviewsModule,
     AdminModule,
     MetaModule,
+    GoldPriceModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

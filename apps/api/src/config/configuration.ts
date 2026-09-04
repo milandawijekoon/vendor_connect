@@ -30,4 +30,16 @@ export default () => ({
     pass: process.env['SMTP_PASS'],
     from: process.env['SMTP_FROM'] ?? 'noreply@vendorconnect.lk',
   },
+
+  goldPrice: {
+    // Cron expression + timezone for the daily fetch. Default: 16:15 on London
+    // business days, ~1h after the LBMA PM auction publishes.
+    cron: process.env['GOLD_PRICE_CRON'] ?? '15 16 * * 1-5',
+    timezone: process.env['GOLD_PRICE_TZ'] ?? 'Europe/London',
+    // Retail/jeweller premium (import duty + margin) added on top of metal value.
+    // 0 = pure metal value; 0.05 ≈ typical Sri Lanka shop rate.
+    retailPremiumPct: parseFloat(process.env['GOLD_PRICE_RETAIL_PREMIUM_PCT'] ?? '0'),
+    // Fetch once on boot if the latest snapshot is missing or stale.
+    refreshOnBoot: (process.env['GOLD_PRICE_REFRESH_ON_BOOT'] ?? 'true') !== 'false',
+  },
 });
