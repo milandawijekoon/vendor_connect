@@ -217,7 +217,7 @@ const INQUIRY_MESSAGES = [
   'We love your portfolio. Are you available for a weekend event in December?',
   'We need coverage from morning setup through to the reception dinner. What is included?',
   'Do you offer pre-event sessions as part of your package? Also what is the delivery timeline?',
-  'Hello! We found you through VendorConnect and would like to schedule a meeting to discuss details.',
+  'Hello! We found you through VendorsLK and would like to schedule a meeting to discuss details.',
   'What is your cancellation policy and do you require a deposit to hold the date?',
 ];
 
@@ -245,7 +245,7 @@ async function main() {
     create: {
       email: 'admin@vendorconnect.lk',
       passwordHash: hash('Admin@1234'),
-      name: 'VendorConnect Admin',
+      name: 'VendorsLK Admin',
       role: Role.ADMIN,
     },
   });

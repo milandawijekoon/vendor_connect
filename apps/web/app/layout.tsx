@@ -6,8 +6,8 @@ import { Footer } from '../components/ui/Footer';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | VendorConnect',
-    default: 'VendorConnect — Find Vendors for Any Occasion in Sri Lanka',
+    template: '%s | VendorsLK',
+    default: 'VendorsLK — Find Vendors for Any Occasion in Sri Lanka',
   },
   description:
     'Discover and connect with top event vendors in Sri Lanka for weddings, parties, and corporate events — photographers, venues, caterers, decorators and more.',

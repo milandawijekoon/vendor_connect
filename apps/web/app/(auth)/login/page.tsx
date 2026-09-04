@@ -17,7 +17,7 @@ export default function LoginPage() {
           <div style={{ padding: '36px 36px 32px' }}>
             {/* Logo */}
             <div style={{ textAlign: 'center', marginBottom: 28 }}>
-              <Link href="/" aria-label="VendorConnect home" style={{ display: 'inline-flex', marginBottom: 14 }}>
+              <Link href="/" aria-label="VendorsLK home" style={{ display: 'inline-flex', marginBottom: 14 }}>
                 <Logo size={28} />
               </Link>
               <h1 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', color: 'var(--text)' }}>Welcome back</h1>

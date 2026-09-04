@@ -4,7 +4,7 @@ import { Icon, type IconName } from '../../components/ui/icons';
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Get in touch with the VendorConnect team — support for customers and vendors across Sri Lanka.',
+  description: 'Get in touch with the VendorsLK team — support for customers and vendors across Sri Lanka.',
 };
 
 const CHANNELS: { icon: IconName; label: string; value: string; href: string }[] = [
@@ -77,7 +77,7 @@ export default function ContactPage() {
 
       <h2>Office</h2>
       <p>
-        VendorConnect (Pvt) Ltd
+        VendorsLK (Pvt) Ltd
         <br />
         Level 3, 123 Union Place
         <br />

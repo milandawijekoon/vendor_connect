@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 
 /**
- * VendorConnect brand mark — two linked nodes forming a "connection".
+ * VendorsLK brand mark — two linked nodes forming a "connection".
  * Pure inline SVG, themable via the `color` prop (defaults to brand green).
  */
 export function LogoMark({ size = 30, style }: { size?: number | undefined; style?: CSSProperties | undefined }) {
@@ -30,9 +30,9 @@ export function LogoMark({ size = 30, style }: { size?: number | undefined; styl
 
 interface LogoProps {
   size?: number | undefined;
-  /** Colour of the "Connect" half of the wordmark. Use "#fff" on dark backgrounds. */
+  /** Colour of the "LK" half of the wordmark. Use "#fff" on dark backgrounds. */
   wordmarkColor?: string | undefined;
-  /** Colour of the "Vendor" half. Defaults to brand green. */
+  /** Colour of the "Vendors" half. Defaults to brand green. */
   brandColor?: string | undefined;
   showWordmark?: boolean | undefined;
   style?: CSSProperties | undefined;
@@ -60,7 +60,7 @@ export function Logo({
             lineHeight: 1,
           }}
         >
-          Vendor<span style={{ color: wordmarkColor }}>Connect</span>
+          Vendors<span style={{ color: wordmarkColor }}>LK</span>
         </span>
       )}
     </span>

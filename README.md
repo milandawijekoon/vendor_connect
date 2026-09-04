@@ -1,4 +1,4 @@
-# VendorConnect (working name) — Event Vendor Marketplace
+# VendorsLK (working name) — Event Vendor Marketplace
 
 A two-sided marketplace connecting customers with vendors for **any occasion** — weddings,
 corporate events, birthdays, parties and more (photographers, decorators, venues, caterers,
