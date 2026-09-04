@@ -9,9 +9,11 @@ COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
 COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY packages/shared/package.json ./packages/shared/package.json
+COPY packages/gold-price/package.json ./packages/gold-price/package.json
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm --filter @vendorconnect/shared run build
+RUN pnpm --filter @vendorconnect/gold-price run build
 RUN pnpm --filter @wedding/api run prisma:generate
 WORKDIR /app/apps/api
 EXPOSE 4000
@@ -22,9 +24,11 @@ COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
 COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY packages/shared/package.json ./packages/shared/package.json
+COPY packages/gold-price/package.json ./packages/gold-price/package.json
 RUN pnpm install --frozen-lockfile --prod=false
 COPY . .
 RUN pnpm --filter @vendorconnect/shared run build
+RUN pnpm --filter @vendorconnect/gold-price run build
 RUN pnpm --filter @wedding/api run prisma:generate
 RUN pnpm --filter @wedding/api run build
 
