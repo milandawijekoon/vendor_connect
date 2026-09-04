@@ -4,27 +4,35 @@ This monorepo deploys as **three Railway services** inside one project:
 
 | Service | Source | Build | Notes |
 |---|---|---|---|
-| `api` | this repo | `apps/api/Dockerfile` (via `apps/api/railway.json`) | NestJS + Prisma |
+| `api` | this repo | `apps/api/Dockerfile` (via root `railway.json`) | NestJS + Prisma |
 | `web` | this repo | `apps/web/Dockerfile` (via `apps/web/railway.json`) | Next.js standalone |
 | `meilisearch` | Docker image `getmeili/meilisearch:v1.9` | — | search index, needs a volume |
 
 Plus a database: either the **Railway MySQL** plugin or an external one (AWS RDS).
 
 Railpack (Railway's autodetector) **cannot** build this repo directly — the root is a
-pnpm workspace with no `start` script. The per-service `railway.json` files force the
-Dockerfile builder instead.
+pnpm workspace with no `start` script.
+
+Railway auto-reads only **one** config file, from the service's root directory (`/`).
+So:
+
+- The **root `railway.json`** configures the **api** service (no dashboard setting needed).
+- The **web** service must have its **Build → Config file path** set to
+  `apps/web/railway.json` (see step 1). Without that it re-runs Railpack and fails with
+  *"No start command detected"*.
 
 ---
 
 ## 1. Create the project
 
 1. Railway → **New Project → Deploy from GitHub repo** → pick `milandawijekoon/vendor_connect`.
-2. This first service becomes **api**. In its **Settings**:
-   - **Source → Root Directory**: leave empty (`/`) — the Docker build context must be the repo root.
-   - **Build → Config file path**: `apps/api/railway.json`
+2. This first service becomes **api**. It picks up the root `railway.json` automatically.
+   In its **Settings** just confirm:
+   - **Source → Root Directory**: empty (`/`) — the Docker build context must be the repo root.
+   - **Build → Config file path**: empty (defaults to root `railway.json`).
 3. **+ New → GitHub Repo → same repo** to add the **web** service. In its Settings:
    - **Root Directory**: empty (`/`)
-   - **Config file path**: `apps/web/railway.json`
+   - **Build → Config file path**: `apps/web/railway.json` ← **required**, or it runs Railpack and fails.
 4. **+ New → Docker Image** → `getmeili/meilisearch:v1.9` for the **meilisearch** service.
    - Add a **Volume** mounted at `/meili_data`.
    - It only needs to be reachable on the private network — no public domain.
