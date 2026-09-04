@@ -19,6 +19,9 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_SSH_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          # `docker compose build` can exceed the 10m default on a cold cache
+          # (e.g. after a lockfile change invalidates the pnpm install layer).
+          command_timeout: 30m
           script: |
             set -euo pipefail
             cd /opt/vendor-connect
