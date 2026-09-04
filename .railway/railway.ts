@@ -5,10 +5,9 @@
  * This is the single source of truth for the Railway project. There are no
  * railway.json / railway.toml files; do not re-add them.
  *
- * Greenfield apply (run once per environment):
+ * Requires the `railway` package at the workspace root and Railway CLI >= 5.42.1.
  *   railway login
- *   railway init                 # create the "vendor_connect" project (first time only)
- *   railway environment          # select the target environment (production, then staging)
+ *   railway link                 # select project + environment (production, then staging)
  *   railway config plan          # preview the diff
  *   railway config apply         # create/update every resource in the linked environment
  *
@@ -50,11 +49,12 @@ export default defineRailway((ctx) => {
 
   // ── API — NestJS 10 + Prisma 5 (MySQL) ───────────────────────────────────
   // The Docker build context is the repo root (the Dockerfile copies
-  // pnpm-workspace.yaml + packages/*), so no root directory is set. The
-  // Dockerfile's own `production` stage is the final image.
+  // pnpm-workspace.yaml + packages/*), so no rootDirectory. The Dockerfile's own
+  // `production` stage is the final image.
   const api = service("api", {
     source: github(REPO, { branch }),
     build: {
+      builder: "DOCKERFILE",
       dockerfilePath: "apps/api/Dockerfile",
       watchPatterns: [
         "apps/api/**",
@@ -63,16 +63,20 @@ export default defineRailway((ctx) => {
         "pnpm-workspace.yaml",
       ],
     },
-    preDeploy: "pnpm exec prisma migrate deploy", // image WORKDIR is /app/apps/api
-    healthcheck: "/api/v1/health",
-    healthcheckTimeout: 120,
-    restartPolicyType: "ON_FAILURE",
-    restartPolicyMaxRetries: 3,
+    deploy: {
+      preDeployCommand: ["pnpm exec prisma migrate deploy"], // image WORKDIR is /app/apps/api
+      healthcheckPath: "/api/v1/health",
+      healthcheckTimeout: 120,
+      restartPolicyType: "ON_FAILURE",
+      restartPolicyMaxRetries: 3,
+    },
     env: {
       NODE_ENV: "production",
       // Railway injects PORT; configuration.ts already reads it.
       DATABASE_URL: db.env.MYSQL_URL,
-      MEILISEARCH_HOST: `http://${meilisearch.env.RAILWAY_PRIVATE_DOMAIN}:7700`,
+      // Composed value → must use Railway's ${{ }} reference syntax; a typed ref
+      // interpolated into a JS template string stringifies to "[object Object]".
+      MEILISEARCH_HOST: "http://${{ meilisearch.RAILWAY_PRIVATE_DOMAIN }}:7700",
       MEILISEARCH_API_KEY: preserve(),
       // Railway reference-variable string, resolved at deploy time. Used here
       // (rather than a typed ref) to break the api <-> web dependency cycle:
@@ -101,6 +105,7 @@ export default defineRailway((ctx) => {
   const web = service("web", {
     source: github(REPO, { branch }),
     build: {
+      builder: "DOCKERFILE",
       dockerfilePath: "apps/web/Dockerfile",
       watchPatterns: [
         "apps/web/**",
@@ -109,16 +114,18 @@ export default defineRailway((ctx) => {
         "pnpm-workspace.yaml",
       ],
     },
-    healthcheck: "/",
-    healthcheckTimeout: 120,
-    restartPolicyType: "ON_FAILURE",
-    restartPolicyMaxRetries: 3,
+    deploy: {
+      healthcheckPath: "/",
+      healthcheckTimeout: 120,
+      restartPolicyType: "ON_FAILURE",
+      restartPolicyMaxRetries: 3,
+    },
     env: {
       NODE_ENV: "production",
       // NEXT_PUBLIC_* is inlined at BUILD time. Railway forwards service
       // variables as Docker build args, and apps/web/Dockerfile declares
       // `ARG NEXT_PUBLIC_API_URL`, so changing this requires a rebuild.
-      NEXT_PUBLIC_API_URL: `https://${api.env.RAILWAY_PUBLIC_DOMAIN}/api/v1`,
+      NEXT_PUBLIC_API_URL: "https://${{ api.RAILWAY_PUBLIC_DOMAIN }}/api/v1",
     },
   });
 
