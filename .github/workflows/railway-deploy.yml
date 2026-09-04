@@ -1,0 +1,111 @@
+# Railway deployment pipeline — additive and fully independent of the EC2
+# pipeline in deploy.yml. It never SSHes to EC2 and never reads
+# docker-compose.prod.yml; deploy.yml never touches Railway. The only shared
+# piece is ci.yml, reused read-only via `workflow_call`.
+#
+# Requirements (one-time, in GitHub repo settings → Environments):
+#   - Environment `production`  → secret RAILWAY_TOKEN = a Railway *project token*
+#                                 scoped to the vendor-connect production env.
+#   - Environment `staging`     → secret RAILWAY_TOKEN = project token for staging.
+#   Add required reviewers on `production` for a manual gate if desired.
+#
+# In the Railway dashboard, turn OFF "Deploy on push" for the api/web services so
+# this workflow is the only thing that triggers Railway deploys (otherwise every
+# push deploys twice). Infra changes in .railway/railway.ts are applied
+# separately with `railway config apply`, not by this workflow.
+
+name: Railway Deploy
+
+on:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Railway environment to deploy
+        type: choice
+        options: [staging, production]
+        default: staging
+
+concurrency:
+  group: railway-deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.pick.outputs.environment }}
+    steps:
+      - id: pick
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref_name }}" = "main" ]; then
+            echo "environment=production" >> "$GITHUB_OUTPUT"
+          else
+            echo "environment=staging" >> "$GITHUB_OUTPUT"
+          fi
+
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      web: ${{ steps.filter.outputs.web }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          # Mirrors the watchPatterns in .railway/railway.ts.
+          filters: |
+            api:
+              - 'apps/api/**'
+              - 'packages/**'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+            web:
+              - 'apps/web/**'
+              - 'packages/shared/**'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+
+  deploy:
+    needs: [setup, ci, changes]
+    runs-on: ubuntu-latest
+    environment: ${{ needs.setup.outputs.environment }}
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api, web]
+    steps:
+      - name: Decide whether to deploy ${{ matrix.service }}
+        id: guard
+        run: |
+          changed="${{ matrix.service == 'api' && needs.changes.outputs.api || needs.changes.outputs.web }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$changed" = "true" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No ${{ matrix.service }} changes in this push; skipping deploy."
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.guard.outputs.run == 'true'
+
+      - name: Install Railway CLI
+        if: steps.guard.outputs.run == 'true'
+        run: npm install -g @railway/cli
+
+      - name: Deploy ${{ matrix.service }} to ${{ needs.setup.outputs.environment }}
+        if: steps.guard.outputs.run == 'true'
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway up \
+            --service ${{ matrix.service }} \
+            --environment ${{ needs.setup.outputs.environment }} \
+            --ci
