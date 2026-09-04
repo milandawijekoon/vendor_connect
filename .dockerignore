@@ -1,0 +1,16 @@
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+.git
+.github
+docs
+infra
+*.md
+.env
+.env.*
+!.env.example
+docker-compose*.yml
+**/coverage
+**/*.log
+.DS_Store
