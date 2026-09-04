@@ -3,7 +3,7 @@ import { ContentPage } from '../../components/ui/ContentPage';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'The terms that govern your use of the VendorConnect platform.',
+  description: 'The terms that govern your use of the VendorsLK platform.',
 };
 
 export default function TermsPage() {
@@ -12,14 +12,14 @@ export default function TermsPage() {
       <p className="updated">Last updated: 27 August 2026</p>
 
       <p>
-        These Terms of Service (“Terms”) govern your access to and use of the VendorConnect website and services
-        (the “Platform”), operated by VendorConnect (Pvt) Ltd (“VendorConnect”, “we”, “us”). By creating an account
+        These Terms of Service (“Terms”) govern your access to and use of the VendorsLK website and services
+        (the “Platform”), operated by VendorsLK (Pvt) Ltd (“VendorsLK”, “we”, “us”). By creating an account
         or using the Platform, you agree to these Terms.
       </p>
 
       <h2>1. The Platform</h2>
       <p>
-        VendorConnect is a marketplace that helps customers discover event vendors and contact them directly. We
+        VendorsLK is a marketplace that helps customers discover event vendors and contact them directly. We
         are not a party to any agreement, booking or transaction between a customer and a vendor, and we do not
         provide event services ourselves.
       </p>
@@ -54,7 +54,7 @@ export default function TermsPage() {
       <h2>5. Reviews and content</h2>
       <p>
         Reviews must reflect genuine experiences. You retain ownership of content you submit, but grant
-        VendorConnect a non-exclusive, worldwide, royalty-free licence to host, display and distribute it on the
+        VendorsLK a non-exclusive, worldwide, royalty-free licence to host, display and distribute it on the
         Platform. We may remove content that is unlawful, abusive, fraudulent or otherwise violates these Terms.
       </p>
 
@@ -74,7 +74,7 @@ export default function TermsPage() {
 
       <h2>8. Intellectual property</h2>
       <p>
-        The Platform, including its design, text, and logos, is owned by VendorConnect and protected by
+        The Platform, including its design, text, and logos, is owned by VendorsLK and protected by
         intellectual property laws. These Terms do not grant you any right to use our branding without prior
         written permission.
       </p>
@@ -88,14 +88,14 @@ export default function TermsPage() {
 
       <h2>10. Limitation of liability</h2>
       <p>
-        To the maximum extent permitted by law, VendorConnect will not be liable for any indirect, incidental or
+        To the maximum extent permitted by law, VendorsLK will not be liable for any indirect, incidental or
         consequential damages, or for any loss arising from a transaction or dispute between a customer and a
         vendor. Our total liability for any claim relating to the Platform will not exceed LKR 25,000.
       </p>
 
       <h2>11. Indemnity</h2>
       <p>
-        You agree to indemnify VendorConnect against claims, losses and expenses arising from your use of the
+        You agree to indemnify VendorsLK against claims, losses and expenses arising from your use of the
         Platform, your content, or your breach of these Terms.
       </p>
 

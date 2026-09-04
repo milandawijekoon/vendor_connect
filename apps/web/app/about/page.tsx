@@ -5,20 +5,20 @@ import { ContentPage } from '../../components/ui/ContentPage';
 export const metadata: Metadata = {
   title: 'About Us',
   description:
-    'VendorConnect is Sri Lanka’s event vendor marketplace — connecting customers with verified photographers, venues, caterers, decorators and more.',
+    'VendorsLK is Sri Lanka’s event vendor marketplace — connecting customers with verified photographers, venues, caterers, decorators and more.',
 };
 
 export default function AboutPage() {
   return (
     <ContentPage
-      eyebrow="About VendorConnect"
+      eyebrow="About VendorsLK"
       title="Helping Sri Lanka plan better events"
-      intro="VendorConnect is a marketplace that connects people planning events with trusted, verified vendors across the island."
+      intro="VendorsLK is a marketplace that connects people planning events with trusted, verified vendors across the island."
     >
       <h2>Our story</h2>
       <p>
         Planning an event in Sri Lanka has always meant chasing recommendations, comparing quotes over the phone,
-        and hoping a vendor turns out to be as good as they sounded. We built VendorConnect to make that process
+        and hoping a vendor turns out to be as good as they sounded. We built VendorsLK to make that process
         simple, transparent and fair — for both customers and the businesses that serve them.
       </p>
 
@@ -31,7 +31,7 @@ export default function AboutPage() {
 
       <h2>For vendors</h2>
       <p>
-        For vendors, VendorConnect is a way to reach thousands of customers planning weddings, parties and corporate
+        For vendors, VendorsLK is a way to reach thousands of customers planning weddings, parties and corporate
         events every month. Listing a business is free, and vendors manage their profile, portfolio and inquiries
         from a single dashboard.
       </p>

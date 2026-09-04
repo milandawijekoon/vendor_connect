@@ -34,10 +34,10 @@ async function bootstrap() {
 
   if (nodeEnv !== 'production') {
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('VendorConnect API')
+      .setTitle('VendorsLK API')
       .setDescription(
         `## Overview
-REST API for the **VendorConnect** event-vendor marketplace (Sri Lanka) — vendors for any occasion: weddings, corporate events, parties, and more.
+REST API for the **VendorsLK** event-vendor marketplace (Sri Lanka) — vendors for any occasion: weddings, corporate events, parties, and more.
 
 Customers discover and contact vendors; vendors manage their profiles and leads.
 
@@ -63,7 +63,7 @@ All errors return:
 \`\`\``,
       )
       .setVersion('1.0.0')
-      .setContact('VendorConnect Team', '', 'mila.subscription1@gmail.com')
+      .setContact('VendorsLK Team', '', 'mila.subscription1@gmail.com')
       .addServer(`http://localhost:${port}`, 'Local development')
       .addBearerAuth(
         { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', description: 'Paste your JWT here' },
@@ -86,7 +86,7 @@ All errors return:
         tagsSorter: 'alpha',
         operationsSorter: 'alpha',
       },
-      customSiteTitle: 'VendorConnect API Docs',
+      customSiteTitle: 'VendorsLK API Docs',
     });
   }
 

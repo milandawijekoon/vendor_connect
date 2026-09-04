@@ -14,11 +14,11 @@ export default function RegisterPage() {
 
           <div style={{ padding: '36px 36px 32px' }}>
             <div style={{ textAlign: 'center', marginBottom: 28 }}>
-              <Link href="/" aria-label="VendorConnect home" style={{ display: 'inline-flex', marginBottom: 14 }}>
+              <Link href="/" aria-label="VendorsLK home" style={{ display: 'inline-flex', marginBottom: 14 }}>
                 <Logo size={28} />
               </Link>
               <h1 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', color: 'var(--text)' }}>Create your account</h1>
-              <p style={{ margin: 0, color: 'var(--text-sec)', fontSize: 14 }}>Join VendorConnect as a customer or vendor</p>
+              <p style={{ margin: 0, color: 'var(--text-sec)', fontSize: 14 }}>Join VendorsLK as a customer or vendor</p>
             </div>
 
             <RegisterForm />

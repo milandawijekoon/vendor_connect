@@ -50,7 +50,7 @@ export class MailService implements OnModuleInit {
       await this.transporter.sendMail({
         from: this.from,
         to: opts.vendorEmail,
-        subject: `New inquiry from ${opts.inquirerName} — VendorConnect`,
+        subject: `New inquiry from ${opts.inquirerName} — VendorsLK`,
         html: `
           <h2>New inquiry for ${opts.vendorName}</h2>
           <p><strong>From:</strong> ${opts.inquirerName} (${opts.inquirerEmail})</p>

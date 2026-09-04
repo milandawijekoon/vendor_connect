@@ -113,7 +113,7 @@ export async function Footer() {
           }}
         >
           <p style={{ fontSize: 13, color: '#64748B' }}>
-            © {new Date().getFullYear()} VendorConnect (Pvt) Ltd. All rights reserved.
+            © {new Date().getFullYear()} VendorsLK (Pvt) Ltd. All rights reserved.
           </p>
           <p style={{ fontSize: 13, color: '#64748B' }}>Colombo, Sri Lanka</p>
         </div>

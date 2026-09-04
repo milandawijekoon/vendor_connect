@@ -4,7 +4,7 @@ import { getCategories, getCities, getPlatformStats } from '../lib/api/server';
 import { Icon, categoryIcon } from '../components/ui/icons';
 
 export const metadata: Metadata = {
-  title: 'VendorConnect — Find Vendors for Any Occasion in Sri Lanka',
+  title: 'VendorsLK — Find Vendors for Any Occasion in Sri Lanka',
 };
 
 // Always reflect live marketplace figures rather than build-time data.
@@ -293,7 +293,7 @@ export default async function HomePage() {
       <section style={{ padding: '72px 20px' }}>
         <div className="container">
           <h2 className="section-title" style={{ textAlign: 'center' }}>
-            How VendorConnect Works
+            How VendorsLK Works
           </h2>
           <p className="section-sub" style={{ textAlign: 'center' }}>
             From discovery to a booked vendor in three simple steps
@@ -371,7 +371,7 @@ export default async function HomePage() {
             Grow Your Business
           </h2>
           <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.72)', marginBottom: 36, lineHeight: 1.7 }}>
-            List your business on VendorConnect and connect with customers planning events across Sri Lanka.
+            List your business on VendorsLK and connect with customers planning events across Sri Lanka.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/register?role=VENDOR" className="btn btn--primary btn--lg">

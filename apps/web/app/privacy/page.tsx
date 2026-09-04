@@ -3,7 +3,7 @@ import { ContentPage } from '../../components/ui/ContentPage';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'How VendorConnect collects, uses and protects your personal information.',
+  description: 'How VendorsLK collects, uses and protects your personal information.',
 };
 
 export default function PrivacyPage() {
@@ -12,7 +12,7 @@ export default function PrivacyPage() {
       <p className="updated">Last updated: 27 August 2026</p>
 
       <p>
-        This Privacy Policy explains how VendorConnect (Pvt) Ltd (“VendorConnect”, “we”, “us”) collects, uses and
+        This Privacy Policy explains how VendorsLK (Pvt) Ltd (“VendorsLK”, “we”, “us”) collects, uses and
         shares information when you use our website and services (the “Platform”). By using the Platform you agree to
         the practices described here.
       </p>
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Legal</strong> — where required by law or to protect the rights, safety and property of
-          VendorConnect or others.
+          VendorsLK or others.
         </li>
       </ul>
       <p>We do not sell your personal information.</p>
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
       <h2>10. Contact</h2>
       <p>
         Questions about this policy? Email <a href="mailto:privacy@vendorconnect.lk">privacy@vendorconnect.lk</a> or
-        write to VendorConnect (Pvt) Ltd, Level 3, 123 Union Place, Colombo 00200, Sri Lanka.
+        write to VendorsLK (Pvt) Ltd, Level 3, 123 Union Place, Colombo 00200, Sri Lanka.
       </p>
     </ContentPage>
   );

@@ -64,7 +64,7 @@ export function Navbar() {
       }}
     >
       <div className="container" style={{ height: '100%', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Link href="/" aria-label="VendorConnect home" style={{ marginRight: 20, flexShrink: 0 }}>
+        <Link href="/" aria-label="VendorsLK home" style={{ marginRight: 20, flexShrink: 0 }}>
           <Logo size={30} />
         </Link>
 
