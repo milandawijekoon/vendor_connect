@@ -69,7 +69,13 @@ export default defineRailway((ctx) => {
       ],
     },
     deploy: {
-      preDeployCommand: ["pnpm exec prisma migrate deploy"], // image WORKDIR is /app/apps/api
+      preDeployCommand: [
+        "pnpm exec prisma migrate deploy",
+        // Keeps the Meilisearch index in sync with the DB on every deploy — cheap
+        // (rebuilds from current vendor rows) and avoids `q` search silently going
+        // stale after any out-of-band data change (reseed, manual DB edit, etc.).
+        "pnpm run reindex",
+      ], // image WORKDIR is /app/apps/api
       healthcheckPath: "/api/v1/health",
       healthcheckTimeout: 120,
       restartPolicyType: "ON_FAILURE",
