@@ -38,10 +38,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (data: LoginFormValues) => {
     const { user: authUser } = await authApi.login(data);
     setUser(authUser);
-    // Hard navigation (not router.push) so the request round-trips through
-    // Next's middleware with the cookie the API just set — a client-side push can
-    // resolve against stale router state and leave the cookie-gated
-    // middleware redirect out of sync with the now-logged-in client state.
     window.location.href = authUser.role === 'VENDOR' ? '/dashboard/vendor' : '/';
   }, []);
 
