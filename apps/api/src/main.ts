@@ -3,6 +3,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
@@ -14,6 +15,7 @@ async function bootstrap() {
   const nodeEnv = config.get<string>('nodeEnv') ?? 'development';
 
   app.use(helmet());
+  app.use(cookieParser());
   app.enableCors({
     origin: nodeEnv === 'production' ? [process.env['FRONTEND_URL'] ?? ''] : true,
     credentials: true,

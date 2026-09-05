@@ -10,7 +10,6 @@ import {
 } from 'react';
 import type { AuthUserDto } from '@vendorconnect/shared';
 import { authApi } from '../api/auth';
-import { clearSession, setSession } from './session';
 import type { LoginFormValues, RegisterFormValues } from '../validation/auth';
 
 interface AuthContextValue {
@@ -37,36 +36,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (data: LoginFormValues) => {
-    const { accessToken, user: authUser } = await authApi.login(data);
-    setSession(accessToken);
+    const { user: authUser } = await authApi.login(data);
     setUser(authUser);
     // Hard navigation (not router.push) so the request round-trips through
-    // Next's middleware with the cookie we just set — a client-side push can
+    // Next's middleware with the cookie the API just set — a client-side push can
     // resolve against stale router state and leave the cookie-gated
     // middleware redirect out of sync with the now-logged-in client state.
     window.location.href = authUser.role === 'VENDOR' ? '/dashboard/vendor' : '/';
   }, []);
 
   const register = useCallback(async (data: RegisterFormValues) => {
-    const { accessToken, user: authUser } = await authApi.register(data);
-    setSession(accessToken);
+    const { user: authUser } = await authApi.register(data);
     setUser(authUser);
     window.location.href = authUser.role === 'VENDOR' ? '/dashboard/vendor' : '/';
   }, []);
 
   const loginWithGoogle = useCallback(async (idToken: string, role?: 'CUSTOMER' | 'VENDOR') => {
-    const { accessToken, user: authUser } = await authApi.google(
-      role ? { idToken, role } : { idToken },
-    );
-    setSession(accessToken);
+    const { user: authUser } = await authApi.google(role ? { idToken, role } : { idToken });
     setUser(authUser);
     window.location.href = authUser.role === 'VENDOR' ? '/dashboard/vendor' : '/';
   }, []);
 
   const logout = useCallback(() => {
-    clearSession();
-    setUser(null);
-    window.location.href = '/';
+    void authApi.logout().finally(() => {
+      setUser(null);
+      window.location.href = '/';
+    });
   }, []);
 
   return (

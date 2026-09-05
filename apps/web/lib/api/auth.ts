@@ -14,4 +14,7 @@ export const authApi = {
 
   me: () =>
     apiClient.get<AuthResponseDto['user']>('/auth/me'),
+
+  logout: () =>
+    apiClient.post<void>('/auth/logout', undefined),
 };

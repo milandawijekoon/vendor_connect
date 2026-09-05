@@ -13,17 +13,13 @@ export class ApiClientError extends Error {
   }
 }
 
-function getAuthHeader(): Record<string, string> {
-  if (typeof window === 'undefined') return {};
-  const token = localStorage.getItem('wc_token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  // The access token lives in an HttpOnly cookie set by the API — `credentials: 'include'`
+  // sends it automatically; there is no token for client JS to read or attach.
   const res = await fetch(`${API_BASE}${path}`, {
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...getAuthHeader(),
       ...(init?.headers ?? {}),
     },
     ...init,
@@ -34,6 +30,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new ApiClientError(body.statusCode, body.message, body.error);
   }
 
+  if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }
 
