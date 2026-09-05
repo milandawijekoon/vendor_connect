@@ -38,16 +38,21 @@ export class AuthController {
     private readonly config: ConfigService,
   ) {}
 
+  /** Frontend and API run on different subdomains in staging/production, so the cookie must be usable cross-site. */
+  private getCookieOptions(): { httpOnly: true; secure: boolean; sameSite: 'lax' | 'none'; path: string } {
+    const isProduction = this.config.get<string>('nodeEnv') === 'production';
+    return {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
+    };
+  }
+
   /** Sets the HttpOnly access-token cookie consumed by JwtStrategy; the token in the response body remains for non-browser clients. */
   private setAuthCookie(res: Response, accessToken: string): void {
     const maxAge = parseDurationMs(this.config.get<string>('auth.jwtExpiresIn') ?? '30m');
-    res.cookie(ACCESS_TOKEN_COOKIE, accessToken, {
-      httpOnly: true,
-      secure: this.config.get<string>('nodeEnv') === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge,
-    });
+    res.cookie(ACCESS_TOKEN_COOKIE, accessToken, { ...this.getCookieOptions(), maxAge });
   }
 
   @Public()
@@ -109,7 +114,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Logout', description: 'Clears the HttpOnly access-token cookie.' })
   logout(@Res({ passthrough: true }) res: Response): void {
-    res.clearCookie(ACCESS_TOKEN_COOKIE, { path: '/' });
+    res.clearCookie(ACCESS_TOKEN_COOKIE, this.getCookieOptions());
   }
 
   @UseGuards(JwtAuthGuard)
