@@ -14,7 +14,9 @@ export interface JwtPayload {
 
 /** Reads the JWT from the HttpOnly cookie set on login; used as a fallback to the Bearer header. */
 function cookieExtractor(req: Request): string | null {
-  return req.cookies?.[ACCESS_TOKEN_COOKIE] ?? null;
+  const cookies = req.cookies as Record<string, unknown> | undefined;
+  const token = cookies?.[ACCESS_TOKEN_COOKIE];
+  return typeof token === 'string' ? token : null;
 }
 
 @Injectable()
