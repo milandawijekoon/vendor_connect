@@ -3,6 +3,10 @@ export default () => ({
   // Railway (and most PaaS) inject PORT; fall back to API_PORT for local/compose.
   port: parseInt(process.env['PORT'] ?? process.env['API_PORT'] ?? '4000', 10),
 
+  // Browser origin allowed to make credentialed (cookie) requests. Used for CORS
+  // and for the CSRF Origin/Referer allow-list on state-changing requests.
+  frontendUrl: process.env['FRONTEND_URL'] ?? '',
+
   database: {
     url: process.env['DATABASE_URL'],
   },

@@ -1,12 +1,53 @@
 import * as Joi from 'joi';
 
+/**
+ * Known weak / placeholder JWT secrets that must never reach a running server.
+ * The first entry is the value shipped in `.env.example`; the rest are common
+ * copy-paste defaults. Matching is case-insensitive and ignores wrapping quotes.
+ */
+const FORBIDDEN_JWT_SECRETS = new Set([
+  'change-me-in-production-min-32-chars',
+  'change-me',
+  'changeme',
+  'secret',
+  'jwt-secret',
+  'your-secret-key',
+  'your-256-bit-secret',
+]);
+
+/**
+ * `Joi.string().min(32)` happily accepts the shipped placeholder (35 chars), which
+ * would leave the HS256 signing key publicly known and let anyone forge an ADMIN
+ * token. Fail closed on placeholder / low-entropy values and require a longer
+ * secret in production.
+ */
+const jwtSecretSchema = Joi.string()
+  .min(32)
+  .required()
+  .custom((value: string, helpers) => {
+    const normalized = value.trim().replace(/^["']|["']$/g, '');
+    if (FORBIDDEN_JWT_SECRETS.has(normalized.toLowerCase())) {
+      return helpers.message({
+        custom:
+          'JWT_SECRET is set to a known placeholder value. Generate a strong secret, e.g. `openssl rand -base64 48`.',
+      });
+    }
+    if (new Set(normalized).size < 12) {
+      return helpers.message({
+        custom: 'JWT_SECRET has insufficient entropy (too few distinct characters).',
+      });
+    }
+    return value;
+  }, 'jwt-secret-strength')
+  .when('NODE_ENV', { is: 'production', then: Joi.string().min(48) });
+
 export const validationSchema = Joi.object({
   NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
   API_PORT: Joi.number().default(4000),
 
   DATABASE_URL: Joi.string().uri().required(),
 
-  JWT_SECRET: Joi.string().min(32).required(),
+  JWT_SECRET: jwtSecretSchema,
   JWT_EXPIRES_IN: Joi.string().default('30m'),
 
   GOOGLE_CLIENT_ID: Joi.string().optional().allow(''),
