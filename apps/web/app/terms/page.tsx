@@ -13,7 +13,7 @@ export default function TermsPage() {
 
       <p>
         These Terms of Service (“Terms”) govern your access to and use of the VendorsLK website and services
-        (the “Platform”), operated by VendorsLK (Pvt) Ltd (“VendorsLK”, “we”, “us”). By creating an account
+        (the “Platform”), operated by VendorsLK (“we”, “us”). By creating an account
         or using the Platform, you agree to these Terms.
       </p>
 
@@ -34,8 +34,10 @@ export default function TermsPage() {
       <h2>3. Customer responsibilities</h2>
       <p>
         You agree to use inquiries and messaging only for genuine event-planning purposes, to provide accurate
-        details, and to deal with vendors honestly. You are solely responsible for evaluating a vendor and for any
-        agreement you enter into with them.
+        details, and to deal with vendors honestly. You are solely responsible for identifying a trustworthy and
+        genuine vendor, for evaluating them before engaging their services, and for any agreement, booking or
+        payment you make with them. The Platform is not involved in and is not responsible for any transaction or
+        deal between you and a vendor.
       </p>
 
       <h2>4. Vendor responsibilities</h2>
@@ -82,15 +84,17 @@ export default function TermsPage() {
       <h2>9. Disclaimers</h2>
       <p>
         The Platform is provided “as is” and “as available”. We do not warrant that listings are accurate, that
-        vendors will perform as described, or that the Platform will be uninterrupted or error-free. Any dealings
-        between customers and vendors are solely between those parties.
+        vendors will perform as described, or that the Platform will be uninterrupted or error-free. Any dealings,
+        agreements, bookings, transactions or payments between customers and vendors are solely between those
+        parties — the Platform is not responsible for, and takes no part in, any transaction or deal made between
+        a customer and a vendor.
       </p>
 
       <h2>10. Limitation of liability</h2>
       <p>
         To the maximum extent permitted by law, VendorsLK will not be liable for any indirect, incidental or
         consequential damages, or for any loss arising from a transaction or dispute between a customer and a
-        vendor. Our total liability for any claim relating to the Platform will not exceed LKR 25,000.
+        vendor. Our total liability for any claim relating to the Platform will not exceed LKR 500.
       </p>
 
       <h2>11. Indemnity</h2>
@@ -111,15 +115,9 @@ export default function TermsPage() {
         constitutes acceptance of the revised Terms.
       </p>
 
-      <h2>14. Governing law</h2>
+      <h2>14. Contact</h2>
       <p>
-        These Terms are governed by the laws of Sri Lanka, and the courts of Colombo have exclusive jurisdiction
-        over any dispute.
-      </p>
-
-      <h2>15. Contact</h2>
-      <p>
-        Questions about these Terms? Email <a href="mailto:legal@vendorconnect.lk">legal@vendorconnect.lk</a>.
+        Questions about these Terms? Email <a href="mailto:support@vendorslk.com">support@vendorslk.com</a>.
       </p>
     </ContentPage>
   );

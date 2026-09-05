@@ -2,27 +2,28 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '../../lib/auth/context';
 import { useCategories } from '../../lib/hooks/useCategories';
 import { Role } from '@vendorconnect/shared';
 import { Logo } from './Logo';
 import { Icon } from './icons';
-import { Button, ButtonLink } from './primitives';
+import { Button, ButtonLink, Input } from './primitives';
 import { GoldPriceBadge } from './GoldPriceBadge';
 
 export function Navbar() {
   const { user, logout } = useAuth();
-  const router = useRouter();
   const pathname = usePathname();
   const categories = useCategories();
 
   const [catOpen, setCatOpen] = useState(false);
+  const [catQuery, setCatQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
   const catRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setCatOpen(false);
+    setCatQuery('');
     setMobileOpen(false);
   }, [pathname]);
 
@@ -36,7 +37,6 @@ export function Navbar() {
 
   const handleLogout = () => {
     logout();
-    router.push('/');
   };
 
   const isStaff = user?.role === Role.ADMIN || user?.role === Role.VENDOR;
@@ -47,7 +47,9 @@ export function Navbar() {
         ? '/dashboard/vendor'
         : '/vendors';
 
-  const topCategories = categories.slice(0, 8);
+  const filteredCategories = catQuery.trim()
+    ? categories.filter((c) => c.name.toLowerCase().includes(catQuery.trim().toLowerCase()))
+    : categories;
 
   return (
     <header
@@ -84,33 +86,47 @@ export function Navbar() {
               Categories
               <Icon name="chevron-down" size={14} style={{ transform: catOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} />
             </button>
-            {catOpen && topCategories.length > 0 && (
+            {catOpen && (
               <div
                 style={{
                   position: 'absolute',
                   top: 'calc(100% + 8px)',
                   left: 0,
-                  minWidth: 220,
+                  width: 260,
                   background: 'var(--white)',
                   border: '1px solid var(--border)',
                   borderRadius: 'var(--radius-md)',
                   boxShadow: 'var(--shadow-lg)',
-                  padding: 6,
-                  display: 'grid',
-                  gridTemplateColumns: '1fr',
-                  gap: 2,
+                  padding: 8,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 6,
                 }}
               >
-                {topCategories.map((c) => (
-                  <Link
-                    key={c.id}
-                    href={`/vendors?categorySlug=${c.slug}`}
-                    className="nav-link"
-                    style={{ display: 'block', padding: '8px 10px' }}
-                  >
-                    {c.name}
-                  </Link>
-                ))}
+                <Input
+                  autoFocus
+                  icon="search"
+                  placeholder="Search categories…"
+                  value={catQuery}
+                  onChange={(e) => setCatQuery(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <div style={{ maxHeight: 280, overflowY: 'auto', display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
+                  {filteredCategories.length > 0 ? (
+                    filteredCategories.map((c) => (
+                      <Link
+                        key={c.id}
+                        href={`/vendors?categorySlug=${c.slug}`}
+                        className="nav-link"
+                        style={{ display: 'block', padding: '8px 10px' }}
+                      >
+                        {c.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <span style={{ padding: '8px 10px', fontSize: 13, color: 'var(--text-sec)' }}>No categories found</span>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -188,16 +204,30 @@ export function Navbar() {
           <Link href="/vendors" className="nav-link" style={{ padding: '10px 8px' }}>
             Find Vendors
           </Link>
-          {topCategories.map((c) => (
-            <Link
-              key={c.id}
-              href={`/vendors?categorySlug=${c.slug}`}
-              className="nav-link"
-              style={{ padding: '10px 8px', paddingLeft: 20, fontSize: 13 }}
-            >
-              {c.name}
-            </Link>
-          ))}
+          <div style={{ padding: '4px 8px 8px' }}>
+            <Input
+              icon="search"
+              placeholder="Search categories…"
+              value={catQuery}
+              onChange={(e) => setCatQuery(e.target.value)}
+            />
+          </div>
+          <div style={{ maxHeight: 240, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {filteredCategories.length > 0 ? (
+              filteredCategories.map((c) => (
+                <Link
+                  key={c.id}
+                  href={`/vendors?categorySlug=${c.slug}`}
+                  className="nav-link"
+                  style={{ padding: '10px 8px', paddingLeft: 20, fontSize: 13 }}
+                >
+                  {c.name}
+                </Link>
+              ))
+            ) : (
+              <span style={{ padding: '10px 20px', fontSize: 13, color: 'var(--text-sec)' }}>No categories found</span>
+            )}
+          </div>
           <Link href="/about" className="nav-link" style={{ padding: '10px 8px' }}>
             About
           </Link>

@@ -14,6 +14,7 @@ export const validationSchema = Joi.object({
   CLOUDINARY_CLOUD_NAME: Joi.string().optional().allow(''),
   CLOUDINARY_API_KEY: Joi.string().optional().allow(''),
   CLOUDINARY_API_SECRET: Joi.string().optional().allow(''),
+  CLOUDINARY_FOLDER: Joi.string().optional().allow(''),
 
   MEILISEARCH_HOST: Joi.string().uri().default('http://localhost:7700'),
   MEILISEARCH_API_KEY: Joi.string().optional().allow(''),
@@ -22,7 +23,7 @@ export const validationSchema = Joi.object({
   SMTP_PORT: Joi.number().default(587),
   SMTP_USER: Joi.string().optional().allow(''),
   SMTP_PASS: Joi.string().optional().allow(''),
-  SMTP_FROM: Joi.string().default('noreply@vendorconnect.lk'),
+  SMTP_FROM: Joi.string().default('noreply@vendorslk.com'),
 
   GOLD_PRICE_CRON: Joi.string().default('15 16 * * 1-5'),
   GOLD_PRICE_TZ: Joi.string().default('Europe/London'),

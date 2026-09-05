@@ -10,30 +10,12 @@ const pickN = <T>(arr: T[], n: number): T[] => [...arr].sort(() => Math.random()
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-// ── Category-relevant portfolio imagery ────────────────────────────────────
-// loremflickr serves keyword-matched photos; `lock` makes each URL deterministic
-// so re-seeding yields stable images.
-const CATEGORY_IMAGE_TAGS: Record<string, string> = {
-  'photography':             'wedding,photographer',
-  'videography':             'wedding,filmmaker',
-  'venues':                  'wedding,venue',
-  'catering':                'catering,banquet',
-  'decoration':              'wedding,decoration',
-  'makeup-hair':             'bridal,makeup',
-  'music-entertainment':     'wedding,band',
-  'flowers-floral':          'wedding,bouquet',
-  'cakes-desserts':          'wedding,cake',
-  'attire-styling':          'bridal,dress',
-  'sound-lighting':          'stage,lighting',
-  'invitations-stationery':  'wedding,invitation',
-  'transportation':          'wedding,car',
-  'jewellery':               'jewellery,diamond',
-  'event-planning':          'wedding,event',
-};
-
+// ── Portfolio imagery ────────────────────────────────────────────────────────
+// picsum.photos serves pre-rendered static images from a CDN (fast, reliably
+// cacheable) rather than doing a live per-request photo lookup like loremflickr
+// did; the seed string keys the image so re-seeding yields stable images.
 const img = (category: string, lock: number, w = 800, h = 600) => {
-  const tags = CATEGORY_IMAGE_TAGS[category] ?? 'wedding';
-  return `https://loremflickr.com/${w}/${h}/${tags}?lock=${lock}`;
+  return `https://picsum.photos/seed/${category}-${lock}/${w}/${h}`;
 };
 
 // ── Categories ─────────────────────────────────────────────────────────────
@@ -240,23 +222,23 @@ async function main() {
   // ── 2. Admin user ──────────────────────────────────────────────────────
   console.log('👑 Seeding admin user...');
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@vendorconnect.lk' },
+    where: { email: 'admin@vendorslk.com' },
     update: {},
     create: {
-      email: 'admin@vendorconnect.lk',
+      email: 'admin@vendorslk.com',
       passwordHash: hash('Admin@1234'),
       name: 'VendorsLK Admin',
       role: Role.ADMIN,
     },
   });
-  console.log(`   ✓ admin@vendorconnect.lk (password: Admin@1234)\n`);
+  console.log(`   ✓ admin@vendorslk.com (password: Admin@1234)\n`);
 
   // ── 3. Vendor users ────────────────────────────────────────────────────
   console.log('🏢 Seeding vendor users & profiles...');
   const vendorUsers: { id: string; email: string }[] = [];
   for (let i = 0; i < VENDORS.length; i++) {
     const v = VENDORS[i]!;
-    const email = `vendor${i + 1}@vendorconnect.lk`;
+    const email = `vendor${i + 1}@vendorslk.com`;
     const user = await prisma.user.upsert({
       where: { email },
       update: {},
@@ -510,8 +492,8 @@ async function main() {
   console.log(`  Inquiries: ${totalInquiries}`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
   console.log('Test credentials:');
-  console.log('  Admin:  admin@vendorconnect.lk  / Admin@1234');
-  console.log('  Vendor: vendor1@vendorconnect.lk / Vendor@1234');
+  console.log('  Admin:  admin@vendorslk.com  / Admin@1234');
+  console.log('  Vendor: vendor1@vendorslk.com / Vendor@1234');
   console.log('  Customer: customer1@example.com       / Customer@1234');
 }
 

@@ -97,7 +97,7 @@ export default defineRailway((ctx) => {
       SMTP_PORT: "587",
       SMTP_USER: preserve(),
       SMTP_PASS: preserve(),
-      SMTP_FROM: "noreply@vendorconnect.lk",
+      SMTP_FROM: "noreply@vendorslk.com",
       // Gold-price cron runs in-process (@nestjs/schedule); no worker service.
       GOLD_PRICE_CRON: "15 16 * * 1-5",
       GOLD_PRICE_TZ: "Europe/London",

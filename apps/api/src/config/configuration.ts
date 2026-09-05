@@ -17,6 +17,9 @@ export default () => ({
     cloudName: process.env['CLOUDINARY_CLOUD_NAME'],
     apiKey: process.env['CLOUDINARY_API_KEY'],
     apiSecret: process.env['CLOUDINARY_API_SECRET'],
+    // Root folder for uploads, e.g. "vendorconnect-staging" / "vendorconnect-production" —
+    // keeps one Cloudinary account's media cleanly separated per deploy environment.
+    folder: process.env['CLOUDINARY_FOLDER'] ?? 'vendorconnect-local',
   },
 
   meilisearch: {
@@ -29,7 +32,7 @@ export default () => ({
     port: parseInt(process.env['SMTP_PORT'] ?? '587', 10),
     user: process.env['SMTP_USER'],
     pass: process.env['SMTP_PASS'],
-    from: process.env['SMTP_FROM'] ?? 'noreply@vendorconnect.lk',
+    from: process.env['SMTP_FROM'] ?? 'noreply@vendorslk.com',
   },
 
   goldPrice: {

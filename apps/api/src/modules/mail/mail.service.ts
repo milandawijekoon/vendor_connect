@@ -6,7 +6,7 @@ import * as nodemailer from 'nodemailer';
 export class MailService implements OnModuleInit {
   private readonly logger = new Logger(MailService.name);
   private transporter: nodemailer.Transporter | null = null;
-  private from = 'noreply@vendorconnect.lk';
+  private from = 'noreply@vendorslk.com';
 
   constructor(private readonly config: ConfigService) {}
 
@@ -61,7 +61,7 @@ export class MailService implements OnModuleInit {
             ${opts.message.replace(/\n/g, '<br>')}
           </blockquote>
           <p style="color:#6b7280;font-size:13px">
-            Log in to <a href="https://vendorconnect.lk/dashboard/vendor/inquiries">your dashboard</a> to respond.
+            Log in to <a href="https://vendorslk.com/dashboard/vendor/inquiries">your dashboard</a> to respond.
           </p>
         `,
       });

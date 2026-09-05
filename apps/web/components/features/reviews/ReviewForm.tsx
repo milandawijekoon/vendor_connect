@@ -24,16 +24,7 @@ export function ReviewForm({ vendorSlug, onReviewSubmitted }: Props) {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  if (!user) {
-    return (
-      <Callout tone="info" icon="user">
-        <a href="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>
-          Sign in
-        </a>{' '}
-        to share your experience with this vendor.
-      </Callout>
-    );
-  }
+  if (!user) return null;
 
   if (user.role !== Role.CUSTOMER) return null;
 
