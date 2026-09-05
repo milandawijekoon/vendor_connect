@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { VendorListItemDto } from '@vendorconnect/shared';
 import { Icon, categoryIcon } from '../../ui/icons';
 import { Stars } from '../../ui/primitives';
@@ -19,11 +20,12 @@ export function VendorCard({ vendor }: Props) {
       <article className="vendor-card-article">
         <div style={{ position: 'relative', height: 200, background: 'var(--primary-light)', overflow: 'hidden' }}>
           {cover ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={cover.url}
               alt={vendor.businessName}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              style={{ objectFit: 'cover' }}
             />
           ) : (
             <div

@@ -10,30 +10,12 @@ const pickN = <T>(arr: T[], n: number): T[] => [...arr].sort(() => Math.random()
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-// ── Category-relevant portfolio imagery ────────────────────────────────────
-// loremflickr serves keyword-matched photos; `lock` makes each URL deterministic
-// so re-seeding yields stable images.
-const CATEGORY_IMAGE_TAGS: Record<string, string> = {
-  'photography':             'wedding,photographer',
-  'videography':             'wedding,filmmaker',
-  'venues':                  'wedding,venue',
-  'catering':                'catering,banquet',
-  'decoration':              'wedding,decoration',
-  'makeup-hair':             'bridal,makeup',
-  'music-entertainment':     'wedding,band',
-  'flowers-floral':          'wedding,bouquet',
-  'cakes-desserts':          'wedding,cake',
-  'attire-styling':          'bridal,dress',
-  'sound-lighting':          'stage,lighting',
-  'invitations-stationery':  'wedding,invitation',
-  'transportation':          'wedding,car',
-  'jewellery':               'jewellery,diamond',
-  'event-planning':          'wedding,event',
-};
-
+// ── Portfolio imagery ────────────────────────────────────────────────────────
+// picsum.photos serves pre-rendered static images from a CDN (fast, reliably
+// cacheable) rather than doing a live per-request photo lookup like loremflickr
+// did; the seed string keys the image so re-seeding yields stable images.
 const img = (category: string, lock: number, w = 800, h = 600) => {
-  const tags = CATEGORY_IMAGE_TAGS[category] ?? 'wedding';
-  return `https://loremflickr.com/${w}/${h}/${tags}?lock=${lock}`;
+  return `https://picsum.photos/seed/${category}-${lock}/${w}/${h}`;
 };
 
 // ── Categories ─────────────────────────────────────────────────────────────
