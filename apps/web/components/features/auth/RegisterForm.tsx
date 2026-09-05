@@ -5,26 +5,28 @@ import Link from 'next/link';
 import { useAuth } from '../../../lib/auth/context';
 import { registerSchema } from '../../../lib/validation/auth';
 import { ApiClientError } from '../../../lib/api/client';
-import { Icon, type IconName } from '../../ui/icons';
+import { Icon } from '../../ui/icons';
 import { Button, Field, Input } from '../../ui/primitives';
 import { GoogleSignInButton } from './GoogleSignInButton';
 import { AuthDivider } from './AuthDivider';
 
-const ROLE_OPTIONS: { value: 'CUSTOMER' | 'VENDOR'; icon: IconName; label: string; sub: string }[] = [
-  { value: 'CUSTOMER', icon: 'user', label: "I'm a customer", sub: 'Planning an event' },
-  { value: 'VENDOR', icon: 'building', label: "I'm a vendor", sub: 'List my business' },
-];
-
 export function RegisterForm() {
   const { register } = useAuth();
-  const [role, setRole] = useState<'CUSTOMER' | 'VENDOR'>('CUSTOMER');
+  const role: 'CUSTOMER' | 'VENDOR' = 'VENDOR';
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [termsError, setTermsError] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setServerError('');
+    setTermsError('');
+    if (!agreedToTerms) {
+      setTermsError('You must agree to the Terms of Service and Privacy Policy to create an account.');
+      return;
+    }
     const formData = new FormData(e.currentTarget);
     const raw = {
       name: formData.get('name'),
@@ -63,46 +65,6 @@ export function RegisterForm() {
         </p>
       )}
 
-      <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-        <legend className="label" style={{ marginBottom: 8 }}>
-          I want to…
-        </legend>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          {ROLE_OPTIONS.map((opt) => {
-            const active = role === opt.value;
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setRole(opt.value)}
-                aria-pressed={active}
-                style={{
-                  padding: '14px 12px',
-                  textAlign: 'center',
-                  border: `1.5px solid ${active ? 'var(--primary)' : 'var(--border)'}`,
-                  background: active ? 'var(--primary-bg)' : 'var(--white)',
-                  borderRadius: 'var(--radius-md)',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    color: active ? 'var(--primary)' : 'var(--text-muted)',
-                    marginBottom: 6,
-                  }}
-                >
-                  <Icon name={opt.icon} size={22} />
-                </span>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{opt.label}</div>
-                <div style={{ fontSize: 12, color: 'var(--text-sec)', marginTop: 2 }}>{opt.sub}</div>
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
       <Field label="Full name" htmlFor="reg-name" required error={errors['name']}>
         <Input id="reg-name" name="name" type="text" autoComplete="name" required invalid={!!errors['name']} />
       </Field>
@@ -126,25 +88,44 @@ export function RegisterForm() {
         <Input id="reg-phone" name="phone" type="tel" autoComplete="tel" placeholder="+94 77 000 0000" />
       </Field>
 
-      <Button type="submit" block loading={isSubmitting} iconRight="arrow-right">
+      <div>
+        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={agreedToTerms}
+            onChange={(e) => {
+              setAgreedToTerms(e.target.checked);
+              if (e.target.checked) setTermsError('');
+            }}
+            style={{ marginTop: 2 }}
+            aria-invalid={!!termsError}
+          />
+          <span style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            I agree to the{' '}
+            <Link href="/terms" style={{ color: 'var(--primary)' }}>
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link href="/privacy" style={{ color: 'var(--primary)' }}>
+              Privacy Policy
+            </Link>
+            . <span className="req">*</span>
+          </span>
+        </label>
+        {termsError && (
+          <p className="field-error" style={{ marginTop: 6 }}>
+            {termsError}
+          </p>
+        )}
+      </div>
+
+      <Button type="submit" block loading={isSubmitting} iconRight="arrow-right" disabled={!agreedToTerms}>
         Create account
       </Button>
-
-      <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
-        By creating an account you agree to our{' '}
-        <Link href="/terms" style={{ color: 'var(--primary)' }}>
-          Terms of Service
-        </Link>{' '}
-        and{' '}
-        <Link href="/privacy" style={{ color: 'var(--primary)' }}>
-          Privacy Policy
-        </Link>
-        .
-      </p>
     </form>
 
     <AuthDivider />
-    <GoogleSignInButton role={role} text="signup_with" />
+    <GoogleSignInButton role={role} text="signup_with" disabled={!agreedToTerms} />
     </>
   );
 }

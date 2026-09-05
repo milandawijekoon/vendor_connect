@@ -11,20 +11,20 @@ const CHANNELS: { icon: IconName; label: string; value: string; href: string }[]
   {
     icon: 'mail',
     label: 'General & support',
-    value: 'hello@vendorconnect.lk',
-    href: 'mailto:hello@vendorconnect.lk',
+    value: 'hello@vendorslk.com',
+    href: 'mailto:hello@vendorslk.com',
   },
   {
     icon: 'building',
     label: 'Vendor onboarding',
-    value: 'vendors@vendorconnect.lk',
-    href: 'mailto:vendors@vendorconnect.lk',
+    value: 'vendors@vendorslk.com',
+    href: 'mailto:vendors@vendorslk.com',
   },
   {
     icon: 'phone',
     label: 'Phone (Mon–Fri, 9am–6pm)',
-    value: '+94 11 234 5678',
-    href: 'tel:+94112345678',
+    value: '+94 71 27 56 710',
+    href: 'tel:+94712756710',
   },
 ];
 
@@ -74,15 +74,6 @@ export default function ContactPage() {
           </div>
         ))}
       </div>
-
-      <h2>Office</h2>
-      <p>
-        VendorsLK (Pvt) Ltd
-        <br />
-        Level 3, 123 Union Place
-        <br />
-        Colombo 00200, Sri Lanka
-      </p>
 
       <h2>For vendors</h2>
       <p>

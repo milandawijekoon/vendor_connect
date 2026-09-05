@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { RegisterForm } from '../../../components/features/auth/RegisterForm';
 import { Logo } from '../../../components/ui/Logo';
 
-export const metadata: Metadata = { title: 'Create account' };
+export const metadata: Metadata = { title: 'List your business' };
 
 export default function RegisterPage() {
   return (
@@ -17,8 +17,8 @@ export default function RegisterPage() {
               <Link href="/" aria-label="VendorsLK home" style={{ display: 'inline-flex', marginBottom: 14 }}>
                 <Logo size={28} />
               </Link>
-              <h1 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', color: 'var(--text)' }}>Create your account</h1>
-              <p style={{ margin: 0, color: 'var(--text-sec)', fontSize: 14 }}>Join VendorsLK as a customer or vendor</p>
+              <h1 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 4px', color: 'var(--text)' }}>List your business</h1>
+              <p style={{ margin: 0, color: 'var(--text-sec)', fontSize: 14 }}>Create a vendor account on VendorsLK</p>
             </div>
 
             <RegisterForm />

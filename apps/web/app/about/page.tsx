@@ -46,7 +46,7 @@ export default function AboutPage() {
       <h2>Get in touch</h2>
       <p>
         Have a question or want to work with us? Visit our <Link href="/contact">contact page</Link> or email{' '}
-        <a href="mailto:hello@vendorconnect.lk">hello@vendorconnect.lk</a>.
+        <a href="mailto:hello@vendorslk.com">hello@vendorslk.com</a>.
       </p>
     </ContentPage>
   );

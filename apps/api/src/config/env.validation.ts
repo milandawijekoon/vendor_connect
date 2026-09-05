@@ -22,7 +22,7 @@ export const validationSchema = Joi.object({
   SMTP_PORT: Joi.number().default(587),
   SMTP_USER: Joi.string().optional().allow(''),
   SMTP_PASS: Joi.string().optional().allow(''),
-  SMTP_FROM: Joi.string().default('noreply@vendorconnect.lk'),
+  SMTP_FROM: Joi.string().default('noreply@vendorslk.com'),
 
   GOLD_PRICE_CRON: Joi.string().default('15 16 * * 1-5'),
   GOLD_PRICE_TZ: Joi.string().default('Europe/London'),

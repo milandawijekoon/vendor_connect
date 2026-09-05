@@ -240,23 +240,23 @@ async function main() {
   // ── 2. Admin user ──────────────────────────────────────────────────────
   console.log('👑 Seeding admin user...');
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@vendorconnect.lk' },
+    where: { email: 'admin@vendorslk.com' },
     update: {},
     create: {
-      email: 'admin@vendorconnect.lk',
+      email: 'admin@vendorslk.com',
       passwordHash: hash('Admin@1234'),
       name: 'VendorsLK Admin',
       role: Role.ADMIN,
     },
   });
-  console.log(`   ✓ admin@vendorconnect.lk (password: Admin@1234)\n`);
+  console.log(`   ✓ admin@vendorslk.com (password: Admin@1234)\n`);
 
   // ── 3. Vendor users ────────────────────────────────────────────────────
   console.log('🏢 Seeding vendor users & profiles...');
   const vendorUsers: { id: string; email: string }[] = [];
   for (let i = 0; i < VENDORS.length; i++) {
     const v = VENDORS[i]!;
-    const email = `vendor${i + 1}@vendorconnect.lk`;
+    const email = `vendor${i + 1}@vendorslk.com`;
     const user = await prisma.user.upsert({
       where: { email },
       update: {},
@@ -510,8 +510,8 @@ async function main() {
   console.log(`  Inquiries: ${totalInquiries}`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
   console.log('Test credentials:');
-  console.log('  Admin:  admin@vendorconnect.lk  / Admin@1234');
-  console.log('  Vendor: vendor1@vendorconnect.lk / Vendor@1234');
+  console.log('  Admin:  admin@vendorslk.com  / Admin@1234');
+  console.log('  Vendor: vendor1@vendorslk.com / Vendor@1234');
   console.log('  Customer: customer1@example.com       / Customer@1234');
 }
 

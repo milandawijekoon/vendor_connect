@@ -12,7 +12,7 @@ export default function PrivacyPage() {
       <p className="updated">Last updated: 27 August 2026</p>
 
       <p>
-        This Privacy Policy explains how VendorsLK (Pvt) Ltd (“VendorsLK”, “we”, “us”) collects, uses and
+        This Privacy Policy explains how VendorsLK (“we”, “us”) collects, uses and
         shares information when you use our website and services (the “Platform”). By using the Platform you agree to
         the practices described here.
       </p>
@@ -109,8 +109,7 @@ export default function PrivacyPage() {
 
       <h2>10. Contact</h2>
       <p>
-        Questions about this policy? Email <a href="mailto:privacy@vendorconnect.lk">privacy@vendorconnect.lk</a> or
-        write to VendorsLK (Pvt) Ltd, Level 3, 123 Union Place, Colombo 00200, Sri Lanka.
+        Questions about this policy? Email <a href="mailto:support@vendorslk.com">support@vendorslk.com</a>.
       </p>
     </ContentPage>
   );

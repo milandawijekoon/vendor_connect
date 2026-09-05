@@ -58,9 +58,11 @@ interface Props {
   role?: 'CUSTOMER' | 'VENDOR';
   /** Google button copy: 'signin_with' (default) or 'signup_with'. */
   text?: 'signin_with' | 'signup_with' | 'continue_with';
+  /** Blocks interaction with the rendered Google button (e.g. until required terms are accepted). */
+  disabled?: boolean;
 }
 
-export function GoogleSignInButton({ role, text = 'signin_with' }: Props) {
+export function GoogleSignInButton({ role, text = 'signin_with', disabled = false }: Props) {
   const { loginWithGoogle } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState('');
@@ -128,8 +130,8 @@ export function GoogleSignInButton({ role, text = 'signin_with' }: Props) {
           display: 'flex',
           justifyContent: 'center',
           minHeight: 44,
-          opacity: pending ? 0.5 : 1,
-          pointerEvents: pending ? 'none' : 'auto',
+          opacity: pending || disabled ? 0.5 : 1,
+          pointerEvents: pending || disabled ? 'none' : 'auto',
         }}
       />
       {error && (
