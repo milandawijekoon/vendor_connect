@@ -14,6 +14,7 @@ export const validationSchema = Joi.object({
   CLOUDINARY_CLOUD_NAME: Joi.string().optional().allow(''),
   CLOUDINARY_API_KEY: Joi.string().optional().allow(''),
   CLOUDINARY_API_SECRET: Joi.string().optional().allow(''),
+  CLOUDINARY_FOLDER: Joi.string().optional().allow(''),
 
   MEILISEARCH_HOST: Joi.string().uri().default('http://localhost:7700'),
   MEILISEARCH_API_KEY: Joi.string().optional().allow(''),

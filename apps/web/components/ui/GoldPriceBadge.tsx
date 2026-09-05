@@ -33,9 +33,33 @@ function tooltip(p: GoldPriceSnapshotDto): string {
  */
 export function GoldPriceBadge({ variant = 'compact' }: { variant?: 'compact' | 'row' }) {
   const price = useGoldPrice();
-  if (!price) return null;
-
   const row = variant === 'row';
+
+  if (!price) {
+    return (
+      <span
+        aria-hidden="true"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          whiteSpace: 'nowrap',
+          padding: row ? '8px 10px' : '5px 9px',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border)',
+          background: 'var(--white)',
+          fontSize: 12.5,
+          lineHeight: 1,
+          color: 'transparent',
+          ...(row ? { width: '100%', justifyContent: 'flex-start', fontSize: 13 } : null),
+        }}
+      >
+        <Icon name="gem" size={14} style={{ color: 'transparent', flexShrink: 0 }} />
+        <span>Gold 22K</span>
+        <strong style={{ fontWeight: 600 }}>≈ Rs 000,000</strong>
+      </span>
+    );
+  }
 
   return (
     <span

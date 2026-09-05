@@ -11,11 +11,13 @@ export interface UploadResult {
 export class CloudinaryService {
   private readonly logger = new Logger(CloudinaryService.name);
   private readonly configured: boolean;
+  private readonly rootFolder: string;
 
   constructor(config: ConfigService) {
     const cloudName = config.get<string>('cloudinary.cloudName');
     const apiKey = config.get<string>('cloudinary.apiKey');
     const apiSecret = config.get<string>('cloudinary.apiSecret');
+    this.rootFolder = config.get<string>('cloudinary.folder') ?? 'vendorconnect-local';
 
     this.configured = Boolean(cloudName && apiKey && apiSecret);
 
@@ -26,11 +28,12 @@ export class CloudinaryService {
     }
   }
 
-  uploadImage(buffer: Buffer, folder = 'vendorconnect/portfolio'): Promise<UploadResult> {
+  uploadImage(buffer: Buffer, subfolder = 'portfolio'): Promise<UploadResult> {
     if (!this.configured) {
       throw new ServiceUnavailableException('Image uploads are not configured on this server');
     }
 
+    const folder = `${this.rootFolder}/${subfolder}`;
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder, resource_type: 'image', transformation: [{ quality: 'auto', fetch_format: 'auto' }] },
