@@ -11,6 +11,18 @@ export class InquiriesRepository {
     return this.prisma.inquiry.create({ data });
   }
 
+  /**
+   * Most recent inquiry to this vendor from the same email with the same message
+   * body since `since`. Used to collapse duplicate/replayed submissions so they
+   * don't spam the vendor's inbox or pollute the lead table.
+   */
+  findRecentDuplicate(vendorId: string, email: string, message: string, since: Date) {
+    return this.prisma.inquiry.findFirst({
+      where: { vendorId, email, message, createdAt: { gte: since } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async findByVendor(vendorId: string, status: InquiryStatus | undefined, skip: number, take: number) {
     const where: Prisma.InquiryWhereInput = {
       vendorId,

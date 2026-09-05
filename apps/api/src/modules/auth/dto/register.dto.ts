@@ -12,9 +12,9 @@ export class RegisterDto {
   @IsEmail()
   email!: string;
 
-  @ApiProperty({ minLength: 8 })
+  @ApiProperty({ minLength: 12 })
   @IsString()
-  @MinLength(8)
+  @MinLength(12)
   @Matches(/^(?=.*[A-Za-z])(?=.*\d).+$/, {
     message: 'password must contain at least one letter and one number',
   })

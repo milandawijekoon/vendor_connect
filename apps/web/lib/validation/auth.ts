@@ -10,7 +10,7 @@ export const registerSchema = z.object({
   email: z.string().email('Enter a valid email'),
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
+    .min(12, 'Password must be at least 12 characters')
     .regex(/^(?=.*[A-Za-z])(?=.*\d).+$/, 'Password must contain at least one letter and one number'),
   role: z.enum(['CUSTOMER', 'VENDOR']).default('CUSTOMER'),
   phone: z.string().optional(),

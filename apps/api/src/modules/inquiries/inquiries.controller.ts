@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -40,6 +41,11 @@ export class InquiriesController {
   constructor(private readonly inquiriesService: InquiriesService) {}
 
   @Public()
+  // Anonymous, unauthenticated write that persists a row and emails the vendor —
+  // tighten the loose global 100/min budget to 3/min/IP so it can't be used to
+  // email-bomb a vendor or flood the lead table. Identical repeat submissions are
+  // additionally de-duplicated in the service layer.
+  @Throttle({ global: { limit: 3, ttl: 60_000 } })
   @Post(':slug/inquiries')
   @ApiOperation({
     summary: 'Submit inquiry',

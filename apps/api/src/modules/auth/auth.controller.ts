@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import {
   ApiBearerAuth,
@@ -30,6 +31,13 @@ const ERROR_400 = { schema: { example: { statusCode: 400, message: ['email must 
 const ERROR_401 = { schema: { example: { statusCode: 401, message: 'Invalid credentials', error: 'Unauthorized' } } };
 const ERROR_409 = { schema: { example: { statusCode: 409, message: 'Email already in use', error: 'Conflict' } } };
 
+/**
+ * Strict per-IP budget for credential-testing surfaces (login / register / Google).
+ * Overrides the loose global 100/min throttle so online password guessing and
+ * credential stuffing are throttled to 5 attempts per minute per IP.
+ */
+const AUTH_RATE_LIMIT = { global: { limit: 5, ttl: 60_000 } };
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -56,6 +64,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle(AUTH_RATE_LIMIT)
   @Post('register')
   @ApiOperation({
     summary: 'Register a new account',
@@ -74,6 +83,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle(AUTH_RATE_LIMIT)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login', description: 'Validates credentials and returns a signed JWT.' })
@@ -90,6 +100,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle(AUTH_RATE_LIMIT)
   @Post('google')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
