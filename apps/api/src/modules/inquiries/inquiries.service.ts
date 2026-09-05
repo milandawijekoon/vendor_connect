@@ -8,6 +8,9 @@ import type { GetInquiriesDto } from './dto/get-inquiries.dto';
 import type { UpdateInquiryStatusDto } from './dto/update-inquiry-status.dto';
 import { InquiriesRepository } from './inquiries.repository';
 
+/** Window within which an identical inquiry (same vendor, email, message) is treated as a duplicate. */
+const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
+
 function toDto(i: Awaited<ReturnType<InquiriesRepository['create']>>): InquiryDto {
   return {
     id: i.id,
@@ -38,6 +41,16 @@ export class InquiriesService {
     });
 
     if (!vendor) throw new NotFoundException('Vendor not found');
+
+    // Collapse identical replays (same vendor + email + message) inside a short
+    // window: return the original row and skip a second notification email.
+    const duplicate = await this.repo.findRecentDuplicate(
+      vendor.id,
+      dto.email,
+      dto.message,
+      new Date(Date.now() - DUPLICATE_WINDOW_MS),
+    );
+    if (duplicate) return toDto(duplicate);
 
     const inquiry = await this.repo.create({
       vendor: { connect: { id: vendor.id } },

@@ -13,6 +13,7 @@ describe('InquiriesService', () => {
   const prisma = createPrismaMock();
   const repo = {
     create: jest.fn(),
+    findRecentDuplicate: jest.fn(),
     findByVendor: jest.fn(),
     findOne: jest.fn(),
     updateStatus: jest.fn(),
@@ -29,6 +30,7 @@ describe('InquiriesService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    repo.findRecentDuplicate.mockResolvedValue(null);
     const moduleRef = await Test.createTestingModule({
       providers: [
         InquiriesService,
@@ -84,6 +86,28 @@ describe('InquiriesService', () => {
       const [arg] = repo.create.mock.calls[0] as [Record<string, unknown>];
       expect(arg).not.toHaveProperty('user');
       expect(arg['eventDate']).toBeNull();
+    });
+
+    it('de-duplicates an identical repeat submission: no new row, no second email', async () => {
+      prisma.vendorProfile.findFirst.mockResolvedValue({
+        id: 'vendor_1',
+        businessName: 'Ceylon Lens Studio',
+        user: { email: 'owner@example.com', name: 'Nimal' },
+      });
+      const original = makeInquiry({ vendorId: 'vendor_1' });
+      repo.findRecentDuplicate.mockResolvedValue(original);
+
+      const result = await service.create('ceylon-lens-studio', dto, null);
+
+      expect(repo.findRecentDuplicate).toHaveBeenCalledWith(
+        'vendor_1',
+        dto.email,
+        dto.message,
+        expect.any(Date),
+      );
+      expect(repo.create).not.toHaveBeenCalled();
+      expect(mail.sendInquiryNotification).not.toHaveBeenCalled();
+      expect(result).toMatchObject({ id: original.id, vendorId: 'vendor_1' });
     });
   });
 

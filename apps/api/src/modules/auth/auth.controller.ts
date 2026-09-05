@@ -1,4 +1,7 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Throttle } from '@nestjs/throttler';
+import type { Response } from 'express';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -17,6 +20,7 @@ import { GoogleLoginDto } from './dto/google-login.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser, type AuthUser } from '../../common/decorators/current-user.decorator';
 import { Public } from '../../common/decorators/public.decorator';
+import { ACCESS_TOKEN_COOKIE, parseDurationMs } from './auth.constants';
 
 const AUTH_RESPONSE_EXAMPLE = {
   accessToken: 'eyJhbGciOiJIUzI1NiJ9...',
@@ -27,12 +31,40 @@ const ERROR_400 = { schema: { example: { statusCode: 400, message: ['email must 
 const ERROR_401 = { schema: { example: { statusCode: 401, message: 'Invalid credentials', error: 'Unauthorized' } } };
 const ERROR_409 = { schema: { example: { statusCode: 409, message: 'Email already in use', error: 'Conflict' } } };
 
+/**
+ * Strict per-IP budget for credential-testing surfaces (login / register / Google).
+ * Overrides the loose global 100/min throttle so online password guessing and
+ * credential stuffing are throttled to 5 attempts per minute per IP.
+ */
+const AUTH_RATE_LIMIT = { global: { limit: 5, ttl: 60_000 } };
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly config: ConfigService,
+  ) {}
+
+  /** Frontend and API run on different subdomains in staging/production, so the cookie must be usable cross-site. */
+  private getCookieOptions(): { httpOnly: true; secure: boolean; sameSite: 'lax' | 'none'; path: string } {
+    const isProduction = this.config.get<string>('nodeEnv') === 'production';
+    return {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
+    };
+  }
+
+  /** Sets the HttpOnly access-token cookie consumed by JwtStrategy; the token in the response body remains for non-browser clients. */
+  private setAuthCookie(res: Response, accessToken: string): void {
+    const maxAge = parseDurationMs(this.config.get<string>('auth.jwtExpiresIn') ?? '30m');
+    res.cookie(ACCESS_TOKEN_COOKIE, accessToken, { ...this.getCookieOptions(), maxAge });
+  }
 
   @Public()
+  @Throttle(AUTH_RATE_LIMIT)
   @Post('register')
   @ApiOperation({
     summary: 'Register a new account',
@@ -41,22 +73,34 @@ export class AuthController {
   @ApiCreatedResponse({ description: 'Account created. Use `accessToken` in subsequent requests.', schema: { example: AUTH_RESPONSE_EXAMPLE } })
   @ApiBadRequestResponse({ ...ERROR_400, description: 'Validation failed (missing field, weak password, etc.)' })
   @ApiConflictResponse({ ...ERROR_409, description: 'Email is already registered' })
-  register(@Body() dto: RegisterDto): Promise<AuthResponseDto> {
-    return this.authService.register(dto);
+  async register(
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthResponseDto> {
+    const result = await this.authService.register(dto);
+    this.setAuthCookie(res, result.accessToken);
+    return result;
   }
 
   @Public()
+  @Throttle(AUTH_RATE_LIMIT)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login', description: 'Validates credentials and returns a signed JWT.' })
   @ApiOkResponse({ description: 'Login successful.', schema: { example: AUTH_RESPONSE_EXAMPLE } })
   @ApiBadRequestResponse({ ...ERROR_400, description: 'Validation failed' })
   @ApiUnauthorizedResponse({ ...ERROR_401, description: 'Email or password is incorrect' })
-  login(@Body() dto: LoginDto): Promise<AuthResponseDto> {
-    return this.authService.login(dto);
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthResponseDto> {
+    const result = await this.authService.login(dto);
+    this.setAuthCookie(res, result.accessToken);
+    return result;
   }
 
   @Public()
+  @Throttle(AUTH_RATE_LIMIT)
   @Post('google')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -67,8 +111,21 @@ export class AuthController {
   @ApiOkResponse({ description: 'Google sign-in successful.', schema: { example: AUTH_RESPONSE_EXAMPLE } })
   @ApiBadRequestResponse({ ...ERROR_400, description: 'Missing or malformed idToken' })
   @ApiUnauthorizedResponse({ ...ERROR_401, description: 'Google credential invalid or email unverified' })
-  googleLogin(@Body() dto: GoogleLoginDto): Promise<AuthResponseDto> {
-    return this.authService.loginWithGoogle(dto);
+  async googleLogin(
+    @Body() dto: GoogleLoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthResponseDto> {
+    const result = await this.authService.loginWithGoogle(dto);
+    this.setAuthCookie(res, result.accessToken);
+    return result;
+  }
+
+  @Public()
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Logout', description: 'Clears the HttpOnly access-token cookie.' })
+  logout(@Res({ passthrough: true }) res: Response): void {
+    res.clearCookie(ACCESS_TOKEN_COOKIE, this.getCookieOptions());
   }
 
   @UseGuards(JwtAuthGuard)

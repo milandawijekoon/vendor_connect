@@ -27,12 +27,11 @@ export const vendorsApi = {
   uploadImage: async (file: File): Promise<PortfolioImageDto> => {
     const formData = new FormData();
     formData.append('file', file);
-    const token = localStorage.getItem('wc_token');
     const res = await fetch(
       `${process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:4000/api/v1'}/vendors/me/images`,
       {
         method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        credentials: 'include',
         body: formData,
       },
     );

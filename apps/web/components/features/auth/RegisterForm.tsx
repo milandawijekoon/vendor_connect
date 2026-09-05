@@ -73,7 +73,7 @@ export function RegisterForm() {
         <Input id="reg-email" name="email" type="email" autoComplete="email" required invalid={!!errors['email']} />
       </Field>
 
-      <Field label="Password" htmlFor="reg-password" required error={errors['password']} hint="At least 8 characters">
+      <Field label="Password" htmlFor="reg-password" required error={errors['password']} hint="At least 12 characters, with a letter and a number">
         <Input
           id="reg-password"
           name="password"

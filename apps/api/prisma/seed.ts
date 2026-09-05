@@ -1,5 +1,6 @@
 import { PrismaClient, VendorStatus, Role, InquiryStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { MeiliSearch } from 'meilisearch';
 
 const prisma = new PrismaClient();
 
@@ -495,6 +496,45 @@ async function main() {
   console.log('  Admin:  admin@vendorslk.com  / Admin@1234');
   console.log('  Vendor: vendor1@vendorslk.com / Vendor@1234');
   console.log('  Customer: customer1@example.com       / Customer@1234');
+
+  // Seeding replaces vendor rows (new ids) without touching Meilisearch, which would
+  // otherwise keep serving stale ids for `q` searches until someone remembers to run
+  // `pnpm reindex` by hand — so do it here as part of the seed itself.
+  await reindexSearch();
+}
+
+async function reindexSearch() {
+  const host = process.env['MEILISEARCH_HOST'];
+  if (!host) {
+    console.log('⚠ MEILISEARCH_HOST not set — skipping search reindex');
+    return;
+  }
+
+  const client = new MeiliSearch({ host, apiKey: process.env['MEILISEARCH_API_KEY'] || undefined });
+  const vendors = await prisma.vendorProfile.findMany({
+    where: { deletedAt: null },
+    include: { categories: { include: { category: true } } },
+  });
+  const docs = vendors.map((v) => ({
+    id: v.id,
+    businessName: v.businessName,
+    description: v.description,
+    city: v.city,
+    categoryNames: v.categories.map((vc) => vc.category.name),
+    priceMin: v.priceMin,
+    priceMax: v.priceMax,
+    avgRating: v.avgRating,
+    status: v.status,
+    slug: v.slug,
+  }));
+
+  try {
+    await client.index('vendors').deleteAllDocuments();
+    if (docs.length > 0) await client.index('vendors').addDocuments(docs);
+    console.log(`🔎 Reindexed ${docs.length} vendors in Meilisearch\n`);
+  } catch (err) {
+    console.log(`⚠ Meilisearch reindex failed — search will fall back to MySQL until \`pnpm reindex\` is run: ${String(err)}\n`);
+  }
 }
 
 main()

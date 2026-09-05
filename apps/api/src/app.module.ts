@@ -19,6 +19,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { MetaModule } from './modules/meta/meta.module';
 import { GoldPriceModule } from './modules/gold-price/gold-price.module';
+import { CsrfGuard } from './common/guards/csrf.guard';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 
@@ -27,6 +28,12 @@ import { RolesGuard } from './common/guards/roles.guard';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      // The monorepo keeps a single env file at the repo root. On the host the
+      // API is launched from `apps/api`, so `../../.env` resolves to it; an
+      // optional local `apps/api/.env` still wins for per-machine overrides. In
+      // containers neither file exists and the vars come from `process.env`
+      // (missing files are ignored).
+      envFilePath: ['.env', '../../.env'],
       load: [configuration],
       validationSchema,
       validationOptions: { abortEarly: false },
@@ -49,6 +56,7 @@ import { RolesGuard } from './common/guards/roles.guard';
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: CsrfGuard },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],

@@ -11,42 +11,38 @@ kept here now so the environment contract is defined before code is written.)*
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in values:
+There is **one** env file for the whole monorepo, at the repo root. Copy it and
+fill in values:
 
-```env
-# Database
-DATABASE_URL="mysql://user:password@localhost:3306/wedding_db"
-
-# Auth
-JWT_SECRET="change-me"
-JWT_EXPIRES_IN="30m"
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=""
-CLOUDINARY_API_KEY=""
-CLOUDINARY_API_SECRET=""
-
-# Search
-MEILISEARCH_HOST="http://localhost:7700"
-MEILISEARCH_API_KEY=""
-
-# Frontend
-NEXT_PUBLIC_API_URL="http://localhost:4000/api/v1"
+```bash
+cp .env.example .env
 ```
 
-All required environment variables are validated at API startup (the app refuses to
-boot with missing/invalid config rather than running in a broken state).
+`.env.example` is the authoritative list of every variable and its default.
+Nothing lives in a per-app `.env` — the pieces wire up to the root file like so:
+
+| Consumer | How it reads the root `.env` |
+|---|---|
+| `docker compose` (dev + prod) | `env_file: .env` in the compose files |
+| API (`nest` / scripts on the host) | `ConfigModule` loads `../../.env` |
+| Prisma CLI (`prisma:*` npm scripts) | wrapped with `dotenv -e ../../.env` |
+| Dev servers via `pnpm dev` (root) | wrapped with `dotenv -e .env` |
+
+`JWT_SECRET` must be a real high-entropy value — generate one with
+`openssl rand -base64 48`. All required variables are validated at API startup;
+the app refuses to boot with missing/invalid config rather than running broken.
 
 ## First-Time Setup
 
 ```bash
-docker compose up -d mysql meilisearch     # start infra
-cd apps/api
-npx prisma migrate dev                      # run migrations
-npx prisma db seed                          # seed categories + demo data
-cd ../..
-docker compose up                           # start web + api
+docker compose up -d mysql meilisearch                 # start infra
+pnpm --filter @wedding/api run prisma:migrate:dev       # run migrations
+pnpm --filter @wedding/api run prisma:seed              # seed categories + demo data
+docker compose up                                       # start web + api
 ```
+
+> Run Prisma through the `pnpm` scripts (not bare `npx prisma …`) so the root
+> `.env` is loaded.
 
 - Web: http://localhost:3000
 - API: http://localhost:4000/api/v1
@@ -64,8 +60,8 @@ npm run test:e2e       # integration/E2E tests
 ## Database Migrations
 
 ```bash
-npx prisma migrate dev --name <description>   # create + apply a new migration (dev)
-npx prisma migrate deploy                      # apply pending migrations (CI/prod)
+pnpm --filter @wedding/api run prisma:migrate:dev -- --name <description>   # create + apply (dev)
+pnpm --filter @wedding/api run prisma:migrate:deploy                        # apply pending (CI/prod)
 ```
 
 `prisma db push` is never used outside of quick local experiments — all real schema
