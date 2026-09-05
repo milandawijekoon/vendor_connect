@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '../../lib/auth/context';
 import { useCategories } from '../../lib/hooks/useCategories';
 import { Role } from '@vendorconnect/shared';
@@ -13,7 +13,6 @@ import { GoldPriceBadge } from './GoldPriceBadge';
 
 export function Navbar() {
   const { user, logout } = useAuth();
-  const router = useRouter();
   const pathname = usePathname();
   const categories = useCategories();
 
@@ -38,7 +37,6 @@ export function Navbar() {
 
   const handleLogout = () => {
     logout();
-    router.push('/');
   };
 
   const isStaff = user?.role === Role.ADMIN || user?.role === Role.VENDOR;

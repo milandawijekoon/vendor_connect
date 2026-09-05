@@ -8,7 +8,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useRouter } from 'next/navigation';
 import type { AuthUserDto } from '@vendorconnect/shared';
 import { authApi } from '../api/auth';
 import { clearSession, setSession } from './session';
@@ -28,7 +27,6 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUserDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     authApi
@@ -68,8 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     clearSession();
     setUser(null);
-    router.push('/');
-  }, [router]);
+    window.location.href = '/';
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, isLoading, login, register, loginWithGoogle, logout }}>
